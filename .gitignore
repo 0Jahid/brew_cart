@@ -33,6 +33,20 @@ migrate_working_dir/
 .pub/
 /build/
 
+# Build directories (all platforms)
+build/
+**/build/
+android/build/
+ios/build/
+linux/build/
+macos/build/
+windows/build/
+web/build/
+
+# Gradle related
+.gradle/
+android/.gradle/
+
 # Symbolication related
 app.*.symbols
 
