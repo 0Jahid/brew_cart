@@ -76,13 +76,12 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: CustomFont
+    - family: Inter
       fonts:
-        - asset: assets/fonts/CustomFont-Regular.ttf
-        - asset: assets/fonts/CustomFont-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/CustomFont-Italic.ttf
-          style: italic
+        - asset: assets/fonts/Inter-VariableFont_opsz,wght.ttf
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/Montserrat-VariableFont_wght.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
