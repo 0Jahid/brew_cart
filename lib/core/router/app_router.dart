@@ -1,15 +1,14 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../features/splash/presentation/pages/splash_page.dart';
-import '../features/auth/presentation/pages/login_page.dart';
-import '../features/auth/presentation/pages/register_page.dart';
-import '../features/coffee_shop/presentation/pages/coffee_shop_page.dart';
-import '../features/coffee_details/presentation/pages/coffee_details_page.dart';
-import '../features/customization/presentation/pages/customization_page.dart';
-import '../features/checkout/presentation/pages/checkout_page.dart';
-import '../features/order_tracking/presentation/pages/order_tracking_page.dart';
-import '../features/profile/presentation/pages/profile_page.dart';
+import '../../features/splash/presentation/pages/splash_page.dart';
+import '../../features/auth/presentation/pages/login_page.dart';
+import '../../features/auth/presentation/pages/register_page.dart';
+import '../../features/coffee_shop/presentation/pages/coffee_shop_page.dart';
+import '../../features/coffee_details/presentation/pages/coffee_details_page.dart';
+import '../../features/customization/presentation/pages/customization_page.dart';
+import '../../features/checkout/presentation/pages/checkout_page.dart';
+import '../../features/order_tracking/presentation/pages/order_tracking_page.dart';
+import '../../features/profile/presentation/pages/profile_page.dart';
 
 class AppRouter {
   static const String splash = '/';

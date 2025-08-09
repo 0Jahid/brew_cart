@@ -1,8 +1,7 @@
 import '../../domain/entities/order.dart';
-import '../../domain/entities/order_item.dart';
 import 'order_item_model.dart';
 
-class OrderModel extends Order {
+class OrderModel extends CoffeeOrder {
   const OrderModel({
     required super.id,
     required super.userId,

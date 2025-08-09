@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'order_item.dart';
 
-class Order extends Equatable {
+class CoffeeOrder extends Equatable {
   final String id;
   final String userId;
   final List<OrderItem> items;
@@ -17,7 +17,7 @@ class Order extends Equatable {
   final DateTime? completedAt;
   final String? notes;
 
-  const Order({
+  const CoffeeOrder({
     required this.id,
     required this.userId,
     required this.items,
@@ -52,7 +52,7 @@ class Order extends Equatable {
         notes,
       ];
 
-  Order copyWith({
+  CoffeeOrder copyWith({
     String? id,
     String? userId,
     List<OrderItem>? items,
@@ -68,7 +68,7 @@ class Order extends Equatable {
     DateTime? completedAt,
     String? notes,
   }) {
-    return Order(
+    return CoffeeOrder(
       id: id ?? this.id,
       userId: userId ?? this.userId,
       items: items ?? this.items,

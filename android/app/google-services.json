@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "455017929618",
+    "project_id": "brewcart-786d6",
+    "storage_bucket": "brewcart-786d6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:455017929618:android:c865e067ce3fa87b81ff4b",
+        "android_client_info": {
+          "package_name": "com.example.brew_cart"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAatxBHEACSMHsGYbQZ5b3Bg975XHIeyPo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

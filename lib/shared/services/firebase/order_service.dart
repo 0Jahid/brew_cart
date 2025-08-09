@@ -5,11 +5,11 @@ import '../../../features/coffee_shop/domain/entities/order.dart';
 import '../../../features/coffee_shop/data/models/order_model.dart';
 
 abstract class OrderService {
-  Future<String> createOrder(Order order);
-  Future<List<Order>> getUserOrders(String userId);
-  Future<Order?> getOrderById(String orderId);
+  Future<String> createOrder(CoffeeOrder order);
+  Future<List<CoffeeOrder>> getUserOrders(String userId);
+  Future<CoffeeOrder?> getOrderById(String orderId);
   Future<void> updateOrderStatus(String orderId, String status);
-  Stream<Order?> watchOrder(String orderId);
+  Stream<CoffeeOrder?> watchOrder(String orderId);
 }
 
 class FirebaseOrderService implements OrderService {
@@ -19,7 +19,7 @@ class FirebaseOrderService implements OrderService {
       : _firestore = firestore ?? FirebaseFirestore.instance;
 
   @override
-  Future<String> createOrder(Order order) async {
+  Future<String> createOrder(CoffeeOrder order) async {
     try {
       final docRef = await _firestore
           .collection(AppConstants.ordersCollection)
@@ -32,7 +32,7 @@ class FirebaseOrderService implements OrderService {
   }
 
   @override
-  Future<List<Order>> getUserOrders(String userId) async {
+  Future<List<CoffeeOrder>> getUserOrders(String userId) async {
     try {
       final querySnapshot = await _firestore
           .collection(AppConstants.ordersCollection)
@@ -49,7 +49,7 @@ class FirebaseOrderService implements OrderService {
   }
 
   @override
-  Future<Order?> getOrderById(String orderId) async {
+  Future<CoffeeOrder?> getOrderById(String orderId) async {
     try {
       final docSnapshot = await _firestore
           .collection(AppConstants.ordersCollection)
@@ -82,7 +82,7 @@ class FirebaseOrderService implements OrderService {
   }
 
   @override
-  Stream<Order?> watchOrder(String orderId) {
+  Stream<CoffeeOrder?> watchOrder(String orderId) {
     try {
       return _firestore
           .collection(AppConstants.ordersCollection)
