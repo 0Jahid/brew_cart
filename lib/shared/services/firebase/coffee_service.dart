@@ -28,7 +28,6 @@ class DummyCoffeeService implements CoffeeService {
       isFeatured: false,
       sizePrices: const {'Small': 3.5, 'Medium': 4.0, 'Large': 4.5},
       availableSizes: const ['Small', 'Medium', 'Large'],
-      isActive: true,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     ),
