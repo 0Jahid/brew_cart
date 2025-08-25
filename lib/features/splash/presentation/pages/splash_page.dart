@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
@@ -23,13 +22,8 @@ class _SplashPageState extends State<SplashPage> {
     await Future.delayed(const Duration(seconds: 3));
     
     if (mounted) {
-      // Check if user is already logged in
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        context.go(AppRouter.home);
-      } else {
-        context.go(AppRouter.login);
-      }
+  // Backend removed: always navigate to login (or home) without auth
+  context.go(AppRouter.login);
     }
   }
 
