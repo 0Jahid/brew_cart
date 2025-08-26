@@ -63,7 +63,7 @@ class _SplashPageState extends State<SplashPage> {
             Text(
               AppStrings.appTagline,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: AppColors.textLight.withOpacity(0.8),
+                color: AppColors.textLight.withValues(alpha: 0.8),
               ),
             ),
             const SizedBox(height: 40),

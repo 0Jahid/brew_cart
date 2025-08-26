@@ -50,115 +50,125 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Spacer(),
-                // Logo and Title
-                Column(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height - 
+                         MediaQuery.of(context).padding.top - 
+                         MediaQuery.of(context).padding.bottom - 48, // Account for SafeArea and padding
+            ),
+            child: IntrinsicHeight(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(40),
-                      ),
-                      child: const Icon(
-                        Icons.coffee,
-                        size: 40,
-                        color: AppColors.textLight,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      AppStrings.appName,
-                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Welcome back!',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                // Login Form
-                Column(
-                  children: [
-                    CustomTextField(
-                      controller: _emailController,
-                      label: AppStrings.email,
-                      keyboardType: TextInputType.emailAddress,
-                      validator: AppValidators.validateEmail,
-                      prefixIcon: Icons.email_outlined,
-                    ),
-                    const SizedBox(height: 16),
-                    CustomTextField(
-                      controller: _passwordController,
-                      label: AppStrings.password,
-                      obscureText: _obscurePassword,
-                      validator: AppValidators.validatePassword,
-                      prefixIcon: Icons.lock_outline,
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscurePassword
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscurePassword = !_obscurePassword;
-                          });
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () {
-                          // TODO: Implement forgot password
-                        },
-                        child: const Text(AppStrings.forgotPassword),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    CustomButton(
-                      text: AppStrings.login,
-                      onPressed: _handleLogin,
-                      isLoading: _isLoading,
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    const SizedBox(height: 40),
+                    // Logo and Title
+                    Column(
                       children: [
-                        Text(
-                          AppStrings.dontHaveAccount,
-                          style: Theme.of(context).textTheme.bodyMedium,
+                        Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: AppColors.primary,
+                            borderRadius: BorderRadius.circular(40),
+                          ),
+                          child: const Icon(
+                            Icons.coffee,
+                            size: 40,
+                            color: AppColors.textLight,
+                          ),
                         ),
-                        TextButton(
-                          onPressed: () {
-                            context.go(AppRouter.register);
-                          },
-                          child: const Text(AppStrings.signUp),
+                        const SizedBox(height: 16),
+                        Text(
+                          AppStrings.appName,
+                          style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Welcome back!',
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
                         ),
                       ],
                     ),
+                    const Spacer(),
+                    // Login Form
+                    Column(
+                      children: [
+                        CustomTextField(
+                          controller: _emailController,
+                          label: AppStrings.email,
+                          keyboardType: TextInputType.emailAddress,
+                          validator: AppValidators.validateEmail,
+                          prefixIcon: Icons.email_outlined,
+                        ),
+                        const SizedBox(height: 16),
+                        CustomTextField(
+                          controller: _passwordController,
+                          label: AppStrings.password,
+                          obscureText: _obscurePassword,
+                          validator: AppValidators.validatePassword,
+                          prefixIcon: Icons.lock_outline,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscurePassword = !_obscurePassword;
+                              });
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () {
+                              // TODO: Implement forgot password
+                            },
+                            child: const Text(AppStrings.forgotPassword),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        CustomButton(
+                          text: AppStrings.login,
+                          onPressed: _handleLogin,
+                          isLoading: _isLoading,
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              AppStrings.dontHaveAccount,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                context.go(AppRouter.register);
+                              },
+                              child: const Text(AppStrings.signUp),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 40),
                   ],
                 ),
-                const Spacer(),
-              ],
+              ),
             ),
           ),
         ),

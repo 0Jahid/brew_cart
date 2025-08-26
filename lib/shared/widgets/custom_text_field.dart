@@ -65,7 +65,7 @@ class CustomTextField extends StatelessWidget {
         filled: true,
         fillColor: enabled
             ? AppColors.cardBackground
-            : AppColors.cardBackground.withOpacity(0.5),
+            : AppColors.cardBackground.withValues(alpha: 0.5),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.border),
@@ -88,7 +88,7 @@ class CustomTextField extends StatelessWidget {
         ),
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.border.withOpacity(0.5)),
+          borderSide: BorderSide(color: AppColors.border.withValues(alpha: 0.5)),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
