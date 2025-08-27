@@ -20,10 +20,10 @@ class _SplashPageState extends State<SplashPage> {
 
   _checkAuthAndNavigate() async {
     await Future.delayed(const Duration(seconds: 3));
-    
+
     if (mounted) {
-  // Backend removed: always navigate to login (or home) without auth
-  context.go(AppRouter.login);
+      // Backend removed: always navigate to login (or home) without auth
+      context.go(AppRouter.login);
     }
   }
 

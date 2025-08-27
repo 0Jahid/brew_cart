@@ -30,11 +30,7 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.coffee,
-              size: 100,
-              color: AppColors.primary,
-            ),
+            Icon(Icons.coffee, size: 100, color: AppColors.primary),
             SizedBox(height: 16),
             Text(
               'Coffee Shop',
@@ -47,10 +43,7 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
             SizedBox(height: 8),
             Text(
               'Coming Soon...',
-              style: TextStyle(
-                fontSize: 16,
-                color: AppColors.textSecondary,
-              ),
+              style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
             ),
           ],
         ),

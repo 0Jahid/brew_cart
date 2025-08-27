@@ -7,18 +7,12 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-      ),
+      appBar: AppBar(title: const Text('Profile')),
       body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.person,
-              size: 100,
-              color: AppColors.primary,
-            ),
+            Icon(Icons.person, size: 100, color: AppColors.primary),
             SizedBox(height: 16),
             Text(
               'Profile Page',
@@ -31,10 +25,7 @@ class ProfilePage extends StatelessWidget {
             SizedBox(height: 8),
             Text(
               'Coming Soon...',
-              style: TextStyle(
-                fontSize: 16,
-                color: AppColors.textSecondary,
-              ),
+              style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
             ),
           ],
         ),

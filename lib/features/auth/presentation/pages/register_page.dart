@@ -150,10 +150,11 @@ class _RegisterPageState extends State<RegisterPage> {
                       controller: _confirmPasswordController,
                       label: AppStrings.confirmPassword,
                       obscureText: _obscureConfirmPassword,
-                      validator: (value) => AppValidators.validateConfirmPassword(
-                        value,
-                        _passwordController.text,
-                      ),
+                      validator: (value) =>
+                          AppValidators.validateConfirmPassword(
+                            value,
+                            _passwordController.text,
+                          ),
                       prefixIcon: Icons.lock_outline,
                       suffixIcon: IconButton(
                         icon: Icon(

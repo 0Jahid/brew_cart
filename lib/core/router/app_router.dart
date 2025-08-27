@@ -24,22 +24,13 @@ class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: splash,
     routes: [
-      GoRoute(
-        path: splash,
-        builder: (context, state) => const SplashPage(),
-      ),
-      GoRoute(
-        path: login,
-        builder: (context, state) => const LoginPage(),
-      ),
+      GoRoute(path: splash, builder: (context, state) => const SplashPage()),
+      GoRoute(path: login, builder: (context, state) => const LoginPage()),
       GoRoute(
         path: register,
         builder: (context, state) => const RegisterPage(),
       ),
-      GoRoute(
-        path: home,
-        builder: (context, state) => const CoffeeShopPage(),
-      ),
+      GoRoute(path: home, builder: (context, state) => const CoffeeShopPage()),
       GoRoute(
         path: coffeeDetails,
         builder: (context, state) {
@@ -65,10 +56,7 @@ class AppRouter {
           return OrderTrackingPage(orderId: orderId);
         },
       ),
-      GoRoute(
-        path: profile,
-        builder: (context, state) => const ProfilePage(),
-      ),
+      GoRoute(path: profile, builder: (context, state) => const ProfilePage()),
     ],
   );
 }

@@ -33,17 +33,13 @@ class CustomButton extends StatelessWidget {
               onPressed: isLoading ? null : onPressed,
               style: OutlinedButton.styleFrom(
                 foregroundColor: textColor ?? AppColors.primary,
-                side: BorderSide(
-                  color: backgroundColor ?? AppColors.primary,
-                ),
+                side: BorderSide(color: backgroundColor ?? AppColors.primary),
               ),
               child: isLoading
                   ? const SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                      ),
+                      child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : Text(text),
             )

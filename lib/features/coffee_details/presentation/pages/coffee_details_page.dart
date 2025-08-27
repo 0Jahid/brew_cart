@@ -4,26 +4,17 @@ import '../../../../core/constants/app_colors.dart';
 class CoffeeDetailsPage extends StatelessWidget {
   final String coffeeId;
 
-  const CoffeeDetailsPage({
-    super.key,
-    required this.coffeeId,
-  });
+  const CoffeeDetailsPage({super.key, required this.coffeeId});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Coffee Details'),
-      ),
+      appBar: AppBar(title: const Text('Coffee Details')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.coffee,
-              size: 100,
-              color: AppColors.primary,
-            ),
+            const Icon(Icons.coffee, size: 100, color: AppColors.primary),
             const SizedBox(height: 16),
             Text(
               'Coffee Details Page',
@@ -35,17 +26,14 @@ class CoffeeDetailsPage extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               'Coffee ID: $coffeeId',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: AppColors.textSecondary,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
             ),
             const SizedBox(height: 8),
             const Text(
               'Coming Soon...',
-              style: TextStyle(
-                fontSize: 16,
-                color: AppColors.textSecondary,
-              ),
+              style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
             ),
           ],
         ),
