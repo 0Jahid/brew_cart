@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../../shared/widgets/custom_app_bar.dart';
 
 class CoffeeShopPage extends StatefulWidget {
   const CoffeeShopPage({super.key});
@@ -12,42 +12,130 @@ class CoffeeShopPage extends StatefulWidget {
 class _CoffeeShopPageState extends State<CoffeeShopPage> {
   int _selectedIndex = 0;
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(AppStrings.appName),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.shopping_cart_outlined),
-            onPressed: () {
-              // TODO: Navigate to cart
-            },
+  Widget _buildBody() {
+    switch (_selectedIndex) {
+      case 0:
+        return _buildHomePage();
+      case 1:
+        return _buildMenuPage();
+      case 2:
+        return _buildCartPage();
+      case 3:
+        return _buildOrdersPage();
+      case 4:
+        return _buildProfilePage();
+      default:
+        return _buildHomePage();
+    }
+  }
+
+  Widget _buildHomePage() {
+    return const SingleChildScrollView(
+      padding: EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Search Bar
+          SearchBar(
+            hintText: AppStrings.searchCoffee,
+            leading: Icon(Icons.search),
+          ),
+          SizedBox(height: 24),
+
+          // Featured Section
+          Text(
+            AppStrings.featured,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+          ),
+          SizedBox(height: 16),
+
+          // Placeholder for featured items
+          SizedBox(
+            height: 200,
+            child: Center(
+              child: Text(
+                'Featured coffee items will be displayed here',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+
+          SizedBox(height: 24),
+
+          // Categories Section
+          Text(
+            AppStrings.categories,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+          ),
+          SizedBox(height: 16),
+
+          // Placeholder for categories
+          SizedBox(
+            height: 100,
+            child: Center(
+              child: Text(
+                'Coffee categories will be displayed here',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+            ),
           ),
         ],
       ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.coffee, size: 100, color: AppColors.primary),
-            SizedBox(height: 16),
-            Text(
-              'Coffee Shop',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primary,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Coming Soon...',
-              style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
-            ),
-          ],
-        ),
+    );
+  }
+
+  Widget _buildMenuPage() {
+    return const Center(
+      child: Text(
+        'Menu Page',
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
       ),
+    );
+  }
+
+  Widget _buildCartPage() {
+    return const Center(
+      child: Text(
+        'Cart Page',
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget _buildOrdersPage() {
+    return const Center(
+      child: Text(
+        'Orders Page',
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget _buildProfilePage() {
+    return const Center(
+      child: Text(
+        'Profile Page',
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: CustomAppBar(
+        userName: 'Jahid',
+        location: 'Dhaka, Bangladesh',
+        onNotificationPressed: () {
+          // TODO: Handle notification press
+        },
+        onLocationPressed: () {
+          // TODO: Handle location press
+        },
+      ),
+      body: _buildBody(),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (index) {
