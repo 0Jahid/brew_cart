@@ -71,53 +71,49 @@ class CoffeeCard extends StatelessWidget {
           Expanded(
             flex: 2,
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Name and Rating
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  Text(
+                    name,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 1),
+                  Row(
                     children: [
+                      const Icon(
+                        Icons.star,
+                        size: 11,
+                        color: Colors.amber,
+                      ),
+                      const SizedBox(width: 2),
                       Text(
-                        name,
+                        rating.toString(),
                         style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
                           color: Colors.black87,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 2),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.star,
-                            size: 12,
-                            color: Colors.amber,
-                          ),
-                          const SizedBox(width: 2),
-                          Text(
-                            rating.toString(),
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Text(
-                        'Size : $size',
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: Colors.grey[600],
                         ),
                       ),
                     ],
                   ),
+                  Text(
+                    'Size : $size',
+                    style: TextStyle(
+                      fontSize: 9,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  
+                  const Spacer(),
                   
                   // Price and Add Button
                   Row(
@@ -126,7 +122,7 @@ class CoffeeCard extends StatelessWidget {
                       Text(
                         '\$${price.toStringAsFixed(2)}',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 13,
                           fontWeight: FontWeight.w600,
                           color: AppColors.primary,
                         ),
@@ -134,16 +130,16 @@ class CoffeeCard extends StatelessWidget {
                       GestureDetector(
                         onTap: onAddPressed,
                         child: Container(
-                          width: 24,
-                          height: 24,
+                          width: 22,
+                          height: 22,
                           decoration: BoxDecoration(
                             color: AppColors.primary,
-                            borderRadius: BorderRadius.circular(6),
+                            borderRadius: BorderRadius.circular(5),
                           ),
                           child: const Icon(
                             Icons.add,
                             color: Colors.white,
-                            size: 14,
+                            size: 12,
                           ),
                         ),
                       ),
