@@ -54,19 +54,12 @@ class CoffeeCard extends StatelessWidget {
                         topLeft: Radius.circular(16),
                         topRight: Radius.circular(16),
                       ),
-                      child: Image.network(
-                        imageUrl!,
-                        fit: BoxFit.cover,
-                      ),
+                      child: Image.network(imageUrl!, fit: BoxFit.cover),
                     )
-                  : const Icon(
-                      Icons.coffee,
-                      size: 40,
-                      color: Colors.grey,
-                    ),
+                  : const Icon(Icons.coffee, size: 40, color: Colors.grey),
             ),
           ),
-          
+
           // Coffee Details
           Expanded(
             flex: 2,
@@ -89,11 +82,7 @@ class CoffeeCard extends StatelessWidget {
                   const SizedBox(height: 1),
                   Row(
                     children: [
-                      const Icon(
-                        Icons.star,
-                        size: 11,
-                        color: Colors.amber,
-                      ),
+                      const Icon(Icons.star, size: 11, color: Colors.amber),
                       const SizedBox(width: 2),
                       Text(
                         rating.toString(),
@@ -107,14 +96,11 @@ class CoffeeCard extends StatelessWidget {
                   ),
                   Text(
                     'Size : $size',
-                    style: TextStyle(
-                      fontSize: 9,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 9, color: Colors.grey[600]),
                   ),
-                  
+
                   const Spacer(),
-                  
+
                   // Price and Add Button
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

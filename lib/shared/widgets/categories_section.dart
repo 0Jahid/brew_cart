@@ -10,7 +10,7 @@ class CategoriesSection extends StatefulWidget {
 
 class _CategoriesSectionState extends State<CategoriesSection> {
   int selectedIndex = 0;
-  
+
   final List<String> categories = [
     'Coffee',
     'Iced Coffee',
@@ -46,9 +46,9 @@ class _CategoriesSectionState extends State<CategoriesSection> {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Categories Tabs
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,

@@ -50,15 +50,11 @@ class _PopularCoffeeItemState extends State<PopularCoffeeItem> {
               color: Colors.grey[300],
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(
-              Icons.coffee,
-              color: Colors.grey,
-              size: 30,
-            ),
+            child: const Icon(Icons.coffee, color: Colors.grey, size: 30),
           ),
-          
+
           const SizedBox(width: 16),
-          
+
           // Coffee Details
           Expanded(
             child: Column(
@@ -75,10 +71,7 @@ class _PopularCoffeeItemState extends State<PopularCoffeeItem> {
                 const SizedBox(height: 4),
                 Text(
                   'Size : ${widget.size}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -92,7 +85,7 @@ class _PopularCoffeeItemState extends State<PopularCoffeeItem> {
               ],
             ),
           ),
-          
+
           // Quantity Controls
           Row(
             children: [
@@ -120,9 +113,9 @@ class _PopularCoffeeItemState extends State<PopularCoffeeItem> {
                   ),
                 ),
               ),
-              
+
               const SizedBox(width: 12),
-              
+
               // Add Button
               GestureDetector(
                 onTap: () {
@@ -138,11 +131,7 @@ class _PopularCoffeeItemState extends State<PopularCoffeeItem> {
                     color: AppColors.primary,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(
-                    Icons.add,
-                    color: Colors.white,
-                    size: 18,
-                  ),
+                  child: const Icon(Icons.add, color: Colors.white, size: 18),
                 ),
               ),
             ],
