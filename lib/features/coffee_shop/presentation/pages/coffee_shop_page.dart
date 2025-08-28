@@ -143,28 +143,109 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
   }
 
   Widget _buildCartPage() {
-    return const Center(
-      child: Text(
-        'Cart Page',
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    return Scaffold(
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        backgroundColor: Colors.grey[100],
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: Colors.black87,
+          ),
+          onPressed: () {
+            setState(() {
+              _selectedIndex = 0; // Go back to home
+            });
+          },
+        ),
+        title: const Text(
+          'Cart',
+          style: TextStyle(
+            color: Colors.black87,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: const Center(
+        child: Text(
+          'Cart Page',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }
 
   Widget _buildOrdersPage() {
-    return const Center(
-      child: Text(
-        'Orders Page',
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    return Scaffold(
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        backgroundColor: Colors.grey[100],
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: Colors.black87,
+          ),
+          onPressed: () {
+            setState(() {
+              _selectedIndex = 0; // Go back to home
+            });
+          },
+        ),
+        title: const Text(
+          'Orders',
+          style: TextStyle(
+            color: Colors.black87,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: const Center(
+        child: Text(
+          'Orders Page',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }
 
   Widget _buildProfilePage() {
-    return const Center(
-      child: Text(
-        'Profile Page',
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    return Scaffold(
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        backgroundColor: Colors.grey[100],
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: Colors.black87,
+          ),
+          onPressed: () {
+            setState(() {
+              _selectedIndex = 0; // Go back to home
+            });
+          },
+        ),
+        title: const Text(
+          'Profile',
+          style: TextStyle(
+            color: Colors.black87,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: const Center(
+        child: Text(
+          'Profile Page',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }
@@ -172,7 +253,8 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      backgroundColor: Colors.grey[100],
+      appBar: _selectedIndex == 0 ? CustomAppBar(
         userName: 'Jahid',
         location: 'Dhaka, Bangladesh',
         onNotificationPressed: () {
@@ -181,7 +263,7 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
         onLocationPressed: () {
           // TODO: Handle location press
         },
-      ),
+      ) : null,
       body: _buildBody(),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _selectedIndex,
@@ -191,6 +273,7 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
           });
         },
       ),
+      extendBody: true,
     );
   }
 }
