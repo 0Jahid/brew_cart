@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../shared/widgets/custom_app_bar.dart';
+import '../../../../shared/widgets/coffee_card.dart';
+import '../../../../shared/widgets/popular_coffee_item.dart';
+import '../../../../shared/widgets/categories_section.dart';
 
 class CoffeeShopPage extends StatefulWidget {
   const CoffeeShopPage({super.key});
@@ -30,58 +33,111 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
   }
 
   Widget _buildHomePage() {
-    return const SingleChildScrollView(
-      padding: EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Search Bar
-          SearchBar(
-            hintText: AppStrings.searchCoffee,
-            leading: Icon(Icons.search),
-          ),
-          SizedBox(height: 24),
-
-          // Featured Section
-          Text(
-            AppStrings.featured,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-          ),
-          SizedBox(height: 16),
-
-          // Placeholder for featured items
-          SizedBox(
-            height: 200,
-            child: Center(
-              child: Text(
-                'Featured coffee items will be displayed here',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-                textAlign: TextAlign.center,
+    return Container(
+      color: Colors.grey[100], // Light gray background
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 16),
+            
+            // Categories Section
+            const CategoriesSection(),
+            
+            const SizedBox(height: 24),
+            
+            // Coffee Grid Section
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.75,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                ),
+                itemCount: 4, // Show 4 coffee cards initially
+                itemBuilder: (context, index) {
+                  return CoffeeCard(
+                    name: 'Cappuccino',
+                    size: '160 ml',
+                    price: 5.20,
+                    rating: 4.9,
+                    onAddPressed: () {
+                      // TODO: Handle add to cart
+                    },
+                  );
+                },
               ),
             ),
-          ),
 
-          SizedBox(height: 24),
+            const SizedBox(height: 32),
 
-          // Categories Section
-          Text(
-            AppStrings.categories,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-          ),
-          SizedBox(height: 16),
+            // Popular Now Section
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Popular Now',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.brown[400],
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.menu,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ],
+                  ),
 
-          // Placeholder for categories
-          SizedBox(
-            height: 100,
-            child: Center(
-              child: Text(
-                'Coffee categories will be displayed here',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-                textAlign: TextAlign.center,
+                  const SizedBox(height: 16),
+
+                  // Popular Coffee Items
+                  PopularCoffeeItem(
+                    name: 'Mocha Cappuccino',
+                    size: '160 ml',
+                    price: 5.20,
+                    onAddPressed: () {
+                      // TODO: Handle add to cart
+                    },
+                    onRemovePressed: () {
+                      // TODO: Handle remove from cart
+                    },
+                  ),
+                  PopularCoffeeItem(
+                    name: 'Cappuccino Latte',
+                    size: '160 ml',
+                    price: 5.20,
+                    onAddPressed: () {
+                      // TODO: Handle add to cart
+                    },
+                    onRemovePressed: () {
+                      // TODO: Handle remove from cart
+                    },
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+
+            const SizedBox(height: 100), // Extra bottom padding for navigation bar
+          ],
+        ),
       ),
     );
   }
