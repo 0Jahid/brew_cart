@@ -149,10 +149,7 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
         backgroundColor: Colors.grey[100],
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: Colors.black87,
-          ),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black87),
           onPressed: () {
             setState(() {
               _selectedIndex = 0; // Go back to home
@@ -185,10 +182,7 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
         backgroundColor: Colors.grey[100],
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: Colors.black87,
-          ),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black87),
           onPressed: () {
             setState(() {
               _selectedIndex = 0; // Go back to home
@@ -221,10 +215,7 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
         backgroundColor: Colors.grey[100],
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: Colors.black87,
-          ),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black87),
           onPressed: () {
             setState(() {
               _selectedIndex = 0; // Go back to home
@@ -254,16 +245,18 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      appBar: _selectedIndex == 0 ? CustomAppBar(
-        userName: 'Jahid',
-        location: 'Dhaka, Bangladesh',
-        onNotificationPressed: () {
-          // TODO: Handle notification press
-        },
-        onLocationPressed: () {
-          // TODO: Handle location press
-        },
-      ) : null,
+      appBar: _selectedIndex == 0
+          ? CustomAppBar(
+              userName: 'Jahid',
+              location: 'Dhaka, Bangladesh',
+              onNotificationPressed: () {
+                // TODO: Handle notification press
+              },
+              onLocationPressed: () {
+                // TODO: Handle location press
+              },
+            )
+          : null,
       body: _buildBody(),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _selectedIndex,
