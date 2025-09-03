@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/models/order_item.dart';
+import '../../../checkout/presentation/pages/checkout_page.dart';
 
 class CustomOrdersPage extends StatefulWidget {
   final String coffeeId;
@@ -72,7 +73,10 @@ class _CustomOrdersPageState extends State<CustomOrdersPage> {
             children: [
               // Coffee Item Header
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 30,
+                  vertical: 15,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(14),
@@ -187,7 +191,9 @@ class _CustomOrdersPageState extends State<CustomOrdersPage> {
                             width: 29,
                             height: 28,
                             decoration: BoxDecoration(
-                              color: quantity > 1 ? AppColors.primary : Colors.grey[400],
+                              color: quantity > 1
+                                  ? AppColors.primary
+                                  : Colors.grey[400],
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: const Icon(
@@ -197,9 +203,9 @@ class _CustomOrdersPageState extends State<CustomOrdersPage> {
                             ),
                           ),
                         ),
-                        
+
                         const SizedBox(width: 19),
-                        
+
                         Text(
                           quantity.toString(),
                           style: const TextStyle(
@@ -208,9 +214,9 @@ class _CustomOrdersPageState extends State<CustomOrdersPage> {
                             color: Colors.black,
                           ),
                         ),
-                        
+
                         const SizedBox(width: 19),
-                        
+
                         GestureDetector(
                           onTap: () {
                             setState(() => quantity++);
@@ -362,10 +368,14 @@ class _CustomOrdersPageState extends State<CustomOrdersPage> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: isSelected ? AppColors.primary : Colors.grey[400]!,
+                              color: isSelected
+                                  ? AppColors.primary
+                                  : Colors.grey[400]!,
                               width: 2,
                             ),
-                            color: isSelected ? AppColors.primary : Colors.transparent,
+                            color: isSelected
+                                ? AppColors.primary
+                                : Colors.transparent,
                           ),
                           child: isSelected
                               ? const Icon(
@@ -446,10 +456,7 @@ class _CustomOrdersPageState extends State<CustomOrdersPage> {
               const SizedBox(height: 8),
               Text(
                 'Cart Total: ${CartManager().formattedTotalPrice} (${CartManager().itemCount} items)',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
               ),
             ],
           ),
@@ -471,7 +478,9 @@ class _CustomOrdersPageState extends State<CustomOrdersPage> {
                 // Show cart summary
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Added to cart! Cart has ${CartManager().itemCount} items'),
+                    content: Text(
+                      'Added to cart! Cart has ${CartManager().itemCount} items',
+                    ),
                     backgroundColor: AppColors.primary,
                     behavior: SnackBarBehavior.floating,
                     action: SnackBarAction(
@@ -535,7 +544,9 @@ class _CustomOrdersPageState extends State<CustomOrdersPage> {
                               children: [
                                 Text(
                                   '${item.coffeeName} x${item.quantity}',
-                                  style: const TextStyle(fontWeight: FontWeight.w600),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                                 Text(
                                   '${item.size}, ${item.sugar}, ${item.ice}',
@@ -600,21 +611,17 @@ class _CustomOrdersPageState extends State<CustomOrdersPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(
-                'Close',
-                style: TextStyle(color: AppColors.primary),
-              ),
+              child: Text('Close', style: TextStyle(color: AppColors.primary)),
             ),
             ElevatedButton(
               onPressed: cartItems.isEmpty
                   ? null
                   : () {
-                      Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: const Text('Checkout feature coming soon!'),
-                          backgroundColor: AppColors.primary,
-                          behavior: SnackBarBehavior.floating,
+                      Navigator.of(context).pop(); // Close dialog
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CheckoutPage(),
                         ),
                       );
                     },

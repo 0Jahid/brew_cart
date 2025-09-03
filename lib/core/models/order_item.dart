@@ -69,17 +69,20 @@ class CartManager {
 
   int get itemCount => _cartItems.fold(0, (sum, item) => sum + item.quantity);
 
-  double get totalPrice => _cartItems.fold(0.0, (sum, item) => sum + item.totalPrice);
+  double get totalPrice =>
+      _cartItems.fold(0.0, (sum, item) => sum + item.totalPrice);
 
   String get formattedTotalPrice => '\$${totalPrice.toStringAsFixed(2)}';
 
   void addItem(OrderItem item) {
     // Check if same coffee with same customizations already exists
-    int existingIndex = _cartItems.indexWhere((cartItem) =>
-        cartItem.coffeeId == item.coffeeId &&
-        cartItem.size == item.size &&
-        cartItem.sugar == item.sugar &&
-        cartItem.ice == item.ice);
+    int existingIndex = _cartItems.indexWhere(
+      (cartItem) =>
+          cartItem.coffeeId == item.coffeeId &&
+          cartItem.size == item.size &&
+          cartItem.sugar == item.sugar &&
+          cartItem.ice == item.ice,
+    );
 
     if (existingIndex != -1) {
       // Update quantity if item already exists
