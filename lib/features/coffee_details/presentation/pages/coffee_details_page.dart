@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../custom_orders/presentation/pages/custom_orders_page.dart';
 
 class CoffeeDetailsPage extends StatefulWidget {
   final String coffeeId;
@@ -270,12 +271,15 @@ class _CoffeeDetailsPageState extends State<CoffeeDetailsPage> {
                           color: Colors.transparent,
                           child: InkWell(
                             onTap: () {
-                              // TODO: Navigate to customization page
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Added $coffeeName to cart!'),
-                                  backgroundColor: AppColors.primary,
-                                  behavior: SnackBarBehavior.floating,
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CustomOrdersPage(
+                                    coffeeId: widget.coffeeId,
+                                    coffeeName: coffeeName,
+                                    coffeePrice: coffeePrice,
+                                    rating: rating,
+                                  ),
                                 ),
                               );
                             },

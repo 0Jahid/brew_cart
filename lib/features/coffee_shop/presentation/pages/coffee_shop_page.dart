@@ -5,6 +5,8 @@ import '../../../../shared/widgets/popular_coffee_item.dart';
 import '../../../../shared/widgets/categories_section.dart';
 import '../../../../shared/widgets/custom_bottom_nav_bar.dart';
 import '../../../coffee_details/presentation/pages/coffee_details_page.dart';
+import '../../../custom_orders/presentation/pages/custom_orders_page.dart';
+import '../../../../core/models/order_item.dart';
 
 class CoffeeShopPage extends StatefulWidget {
   const CoffeeShopPage({super.key});
@@ -90,10 +92,15 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
                       );
                     },
                     onAddPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Added ${coffee['name']} to cart!'),
-                          behavior: SnackBarBehavior.floating,
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CustomOrdersPage(
+                            coffeeId: 'coffee_$index',
+                            coffeeName: coffee['name'] as String,
+                            coffeePrice: '\$${(coffee['price'] as double).toStringAsFixed(2)}',
+                            rating: coffee['rating'] as double,
+                          ),
                         ),
                       );
                     },
@@ -158,7 +165,17 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
                       );
                     },
                     onAddPressed: () {
-                      // TODO: Handle add to cart
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CustomOrdersPage(
+                            coffeeId: 'mocha_cappuccino',
+                            coffeeName: 'Mocha Cappuccino',
+                            coffeePrice: '\$5.20',
+                            rating: 4.8,
+                          ),
+                        ),
+                      );
                     },
                     onRemovePressed: () {
                       // TODO: Handle remove from cart
@@ -184,7 +201,17 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
                       );
                     },
                     onAddPressed: () {
-                      // TODO: Handle add to cart
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CustomOrdersPage(
+                            coffeeId: 'cappuccino_latte',
+                            coffeeName: 'Cappuccino Latte',
+                            coffeePrice: '\$5.20',
+                            rating: 4.7,
+                          ),
+                        ),
+                      );
                     },
                     onRemovePressed: () {
                       // TODO: Handle remove from cart
@@ -204,6 +231,8 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
   }
 
   Widget _buildCartPage() {
+    final cartItems = CartManager().cartItems;
+    
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -217,9 +246,9 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
             });
           },
         ),
-        title: const Text(
-          'Cart',
-          style: TextStyle(
+        title: Text(
+          'Cart (${CartManager().itemCount})',
+          style: const TextStyle(
             color: Colors.black87,
             fontSize: 20,
             fontWeight: FontWeight.w600,
@@ -227,12 +256,192 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
         ),
         centerTitle: true,
       ),
-      body: const Center(
-        child: Text(
-          'Cart Page',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-      ),
+      body: cartItems.isEmpty
+          ? const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.shopping_cart_outlined,
+                    size: 80,
+                    color: Colors.grey,
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Your cart is empty',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Add some coffee to get started!',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(20),
+                    itemCount: cartItems.length,
+                    itemBuilder: (context, index) {
+                      final item = cartItems[index];
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.08),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            // Coffee Image
+                            Container(
+                              width: 60,
+                              height: 60,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(Icons.coffee, color: Colors.grey, size: 30),
+                            ),
+                            
+                            const SizedBox(width: 16),
+                            
+                            // Coffee Details
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '${item.coffeeName} x${item.quantity}',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '${item.size}, ${item.sugar}, ${item.ice}',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    item.formattedTotalPrice,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            
+                            // Remove Button
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () {
+                                setState(() {
+                                  CartManager().removeItem(index);
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                
+                // Cart Summary
+                if (cartItems.isNotEmpty)
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Total:',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              CartManager().formattedTotalPrice,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                        
+                        const SizedBox(height: 16),
+                        
+                        SizedBox(
+                          width: double.infinity,
+                          height: 56,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Checkout feature coming soon!'),
+                                  behavior: SnackBarBehavior.floating,
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF8B4513),
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            child: const Text(
+                              'Checkout',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
     );
   }
 
@@ -321,6 +530,7 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
       body: _buildBody(),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _selectedIndex,
+        cartItemCount: CartManager().itemCount,
         onTap: (index) {
           setState(() {
             _selectedIndex = index;

@@ -6,11 +6,13 @@ import '../../core/constants/app_colors.dart';
 class CustomBottomNavBar extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
+  final int? cartItemCount;
 
   const CustomBottomNavBar({
     super.key,
     required this.currentIndex,
     required this.onTap,
+    this.cartItemCount,
   });
 
   @override
@@ -44,6 +46,8 @@ class CustomBottomNavBar extends StatelessWidget {
               index: 1,
               iconPath: 'assets/icons/shopping_bag.svg',
               label: 'Cart',
+              showBadge: cartItemCount != null && cartItemCount! > 0,
+              badgeCount: cartItemCount ?? 0,
             ),
             _buildNavItem(
               index: 2,
@@ -65,6 +69,8 @@ class CustomBottomNavBar extends StatelessWidget {
     required int index,
     required String iconPath,
     required String label,
+    bool showBadge = false,
+    int badgeCount = 0,
   }) {
     final isSelected = currentIndex == index;
 
@@ -79,14 +85,43 @@ class CustomBottomNavBar extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SvgPicture.asset(
-              iconPath,
-              width: 24,
-              height: 24,
-              colorFilter: ColorFilter.mode(
-                isSelected ? Colors.white : Colors.grey[600]!,
-                BlendMode.srcIn,
-              ),
+            Stack(
+              children: [
+                SvgPicture.asset(
+                  iconPath,
+                  width: 24,
+                  height: 24,
+                  colorFilter: ColorFilter.mode(
+                    isSelected ? Colors.white : Colors.grey[600]!,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                if (showBadge)
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 16,
+                        minHeight: 16,
+                      ),
+                      child: Text(
+                        badgeCount > 99 ? '99+' : badgeCount.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+              ],
             ),
             if (isSelected) ...[
               const SizedBox(width: 8),
