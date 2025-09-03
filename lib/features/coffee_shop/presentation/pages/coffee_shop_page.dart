@@ -4,6 +4,7 @@ import '../../../../shared/widgets/coffee_card.dart';
 import '../../../../shared/widgets/popular_coffee_item.dart';
 import '../../../../shared/widgets/categories_section.dart';
 import '../../../../shared/widgets/custom_bottom_nav_bar.dart';
+import '../../../coffee_details/presentation/pages/coffee_details_page.dart';
 
 class CoffeeShopPage extends StatefulWidget {
   const CoffeeShopPage({super.key});
@@ -58,13 +59,43 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
                 ),
                 itemCount: 4, // Show 4 coffee cards initially
                 itemBuilder: (context, index) {
+                  // Different coffee varieties
+                  final coffeeTypes = [
+                    {'name': 'Cappuccino', 'price': 5.20, 'rating': 4.9},
+                    {'name': 'Latte', 'price': 4.80, 'rating': 4.7},
+                    {'name': 'Americano', 'price': 3.90, 'rating': 4.5},
+                    {'name': 'Espresso', 'price': 3.50, 'rating': 4.8},
+                  ];
+                  
+                  final coffee = coffeeTypes[index];
+                  
                   return CoffeeCard(
-                    name: 'Cappuccino',
+                    name: coffee['name'] as String,
                     size: '160 ml',
-                    price: 5.20,
-                    rating: 4.9,
+                    price: coffee['price'] as double,
+                    rating: coffee['rating'] as double,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CoffeeDetailsPage(
+                            coffeeId: 'coffee_$index',
+                            coffeeName: coffee['name'] as String,
+                            coffeePrice: '\$${(coffee['price'] as double).toStringAsFixed(2)}',
+                            coffeeSize: '160 ml',
+                            rating: coffee['rating'] as double,
+                            reviews: 2453,
+                          ),
+                        ),
+                      );
+                    },
                     onAddPressed: () {
-                      // TODO: Handle add to cart
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Added ${coffee['name']} to cart!'),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
                     },
                   );
                 },
@@ -111,6 +142,21 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
                     name: 'Mocha Cappuccino',
                     size: '160 ml',
                     price: 5.20,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CoffeeDetailsPage(
+                            coffeeId: 'mocha_cappuccino',
+                            coffeeName: 'Mocha Cappuccino',
+                            coffeePrice: '\$5.20',
+                            coffeeSize: '160 ml',
+                            rating: 4.8,
+                            reviews: 1876,
+                          ),
+                        ),
+                      );
+                    },
                     onAddPressed: () {
                       // TODO: Handle add to cart
                     },
@@ -122,6 +168,21 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
                     name: 'Cappuccino Latte',
                     size: '160 ml',
                     price: 5.20,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CoffeeDetailsPage(
+                            coffeeId: 'cappuccino_latte',
+                            coffeeName: 'Cappuccino Latte',
+                            coffeePrice: '\$5.20',
+                            coffeeSize: '160 ml',
+                            rating: 4.7,
+                            reviews: 2134,
+                          ),
+                        ),
+                      );
+                    },
                     onAddPressed: () {
                       // TODO: Handle add to cart
                     },
