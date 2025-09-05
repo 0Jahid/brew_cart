@@ -718,52 +718,58 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
 
           // Order Details - Show all cart items
           if (hasItems) ...[
-            ...cartItems.map((item) => Container(
-              margin: const EdgeInsets.only(bottom: 16),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Details Column
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item.coffeeName,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
-                            fontFamily: 'Montserrat',
+            ...cartItems.map(
+              (item) => Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Details Column
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.coffeeName,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                              fontFamily: 'Montserrat',
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        _buildOrderDetailRow('Size', item.size),
-                        const SizedBox(height: 4),
-                        _buildOrderDetailRow('Sugar', item.sugar),
-                        const SizedBox(height: 4),
-                        _buildOrderDetailRow('Ice', item.ice),
-                        const SizedBox(height: 4),
-                        _buildOrderDetailRow('Quantity', '${item.quantity}'),
-                      ],
+                          const SizedBox(height: 8),
+                          _buildOrderDetailRow('Size', item.size),
+                          const SizedBox(height: 4),
+                          _buildOrderDetailRow('Sugar', item.sugar),
+                          const SizedBox(height: 4),
+                          _buildOrderDetailRow('Ice', item.ice),
+                          const SizedBox(height: 4),
+                          _buildOrderDetailRow('Quantity', '${item.quantity}'),
+                        ],
+                      ),
                     ),
-                  ),
 
-                  const SizedBox(width: 20),
+                    const SizedBox(width: 20),
 
-                  // Coffee Image
-                  Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFD9D9D9),
-                      borderRadius: BorderRadius.circular(8),
+                    // Coffee Image
+                    Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFD9D9D9),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        Icons.coffee,
+                        size: 30,
+                        color: Colors.grey,
+                      ),
                     ),
-                    child: const Icon(Icons.coffee, size: 30, color: Colors.grey),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            )),
+            ),
           ] else ...[
             // Empty cart placeholder
             Row(
@@ -1469,9 +1475,9 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
                       color: Colors.white,
                     ),
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // User Name
                   const Text(
                     'Jahid Rahman',
@@ -1482,9 +1488,9 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
                       fontFamily: 'Montserrat',
                     ),
                   ),
-                  
+
                   const SizedBox(height: 8),
-                  
+
                   // Email
                   Text(
                     'jahid@brew-cart.com',
@@ -1494,34 +1500,26 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
                       fontFamily: 'Montserrat',
                     ),
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Stats Row
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       _buildStatItem('Orders', '24'),
-                      Container(
-                        height: 40,
-                        width: 1,
-                        color: Colors.grey[300],
-                      ),
+                      Container(height: 40, width: 1, color: Colors.grey[300]),
                       _buildStatItem('Points', '1,200'),
-                      Container(
-                        height: 40,
-                        width: 1,
-                        color: Colors.grey[300],
-                      ),
+                      Container(height: 40, width: 1, color: Colors.grey[300]),
                       _buildStatItem('Rewards', '3'),
                     ],
                   ),
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Membership Section
             Container(
               width: double.infinity,
@@ -1556,9 +1554,9 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
                       size: 30,
                     ),
                   ),
-                  
+
                   const SizedBox(width: 16),
-                  
+
                   const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1583,7 +1581,7 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
                       ],
                     ),
                   ),
-                  
+
                   const Icon(
                     Icons.arrow_forward_ios,
                     color: Colors.white,
@@ -1592,9 +1590,9 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Menu Options
             _buildMenuSection([
               _buildMenuTile(
@@ -1622,9 +1620,9 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
                 onTap: () => _showOrderHistory(context),
               ),
             ]),
-            
+
             const SizedBox(height: 24),
-            
+
             _buildMenuSection([
               _buildMenuTile(
                 icon: Icons.notifications_outlined,
@@ -1645,9 +1643,9 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
                 onTap: () => _showAboutDialog(context),
               ),
             ]),
-            
+
             const SizedBox(height: 24),
-            
+
             // Logout Button
             Container(
               width: double.infinity,
@@ -1673,7 +1671,7 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 20),
           ],
         ),
@@ -1719,9 +1717,7 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
           ),
         ],
       ),
-      child: Column(
-        children: items,
-      ),
+      child: Column(children: items),
     );
   }
 
@@ -1740,11 +1736,7 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
           color: const Color(0xFF8B4513).withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Icon(
-          icon,
-          color: const Color(0xFF8B4513),
-          size: 24,
-        ),
+        child: Icon(icon, color: const Color(0xFF8B4513), size: 24),
       ),
       title: Text(
         title,
@@ -1780,7 +1772,10 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text(
           'Edit Profile',
-          style: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.bold,
+          ),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1825,7 +1820,9 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
                 ),
               );
             },
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF8B4513)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF8B4513),
+            ),
             child: const Text('Save', style: TextStyle(color: Colors.white)),
           ),
         ],
@@ -1840,7 +1837,10 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text(
           'Delivery Addresses',
-          style: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.bold,
+          ),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1882,7 +1882,10 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text(
           'Payment Methods',
-          style: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.bold,
+          ),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1894,7 +1897,10 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
               trailing: const Icon(Icons.edit),
             ),
             ListTile(
-              leading: const Icon(Icons.account_balance_wallet, color: Color(0xFF8B4513)),
+              leading: const Icon(
+                Icons.account_balance_wallet,
+                color: Color(0xFF8B4513),
+              ),
               title: const Text('E-Wallet'),
               subtitle: const Text('Connected'),
               trailing: const Icon(Icons.edit),
@@ -1923,7 +1929,10 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text(
           'Order History',
-          style: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.bold,
+          ),
         ),
         content: Container(
           width: double.maxFinite,
@@ -1934,19 +1943,28 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
                 leading: const Icon(Icons.local_cafe, color: Color(0xFF8B4513)),
                 title: const Text('Cappuccino x2'),
                 subtitle: const Text('Dec 2, 2024 - \$10.40'),
-                trailing: const Text('Delivered', style: TextStyle(color: Colors.green)),
+                trailing: const Text(
+                  'Delivered',
+                  style: TextStyle(color: Colors.green),
+                ),
               ),
               ListTile(
                 leading: const Icon(Icons.local_cafe, color: Color(0xFF8B4513)),
                 title: const Text('Latte x1'),
                 subtitle: const Text('Dec 1, 2024 - \$4.80'),
-                trailing: const Text('Delivered', style: TextStyle(color: Colors.green)),
+                trailing: const Text(
+                  'Delivered',
+                  style: TextStyle(color: Colors.green),
+                ),
               ),
               ListTile(
                 leading: const Icon(Icons.local_cafe, color: Color(0xFF8B4513)),
                 title: const Text('Americano x3'),
                 subtitle: const Text('Nov 30, 2024 - \$11.70'),
-                trailing: const Text('Delivered', style: TextStyle(color: Colors.green)),
+                trailing: const Text(
+                  'Delivered',
+                  style: TextStyle(color: Colors.green),
+                ),
               ),
             ],
           ),
@@ -1968,7 +1986,10 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text(
           'Notification Settings',
-          style: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.bold,
+          ),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -2013,7 +2034,10 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text(
           'Help & Support',
-          style: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.bold,
+          ),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -2061,7 +2085,10 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text(
           'About Brew Cart',
-          style: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.bold,
+          ),
         ),
         content: const Column(
           mainAxisSize: MainAxisSize.min,
@@ -2105,7 +2132,10 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text(
           'Logout',
-          style: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.bold,
+          ),
         ),
         content: const Text(
           'Are you sure you want to logout?',

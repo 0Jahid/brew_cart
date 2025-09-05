@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/router/app_router.dart';
 import '../../../coffee_shop/presentation/pages/coffee_shop_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -123,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                           topRight: Radius.circular(32),
                         ),
                       ),
-                      child: Padding(
+                      child: SingleChildScrollView(
                         padding: const EdgeInsets.all(32),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -292,36 +291,6 @@ class _LoginPageState extends State<LoginPage> {
 
                             const SizedBox(height: 24),
 
-                            // Sign Up Link
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text(
-                                  "Don't have an account? ",
-                                  style: TextStyle(
-                                    color: AppColors.textSecondary,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    context.go(AppRouter.signUp);
-                                  },
-                                  child: const Text(
-                                    'Sign Up',
-                                    style: TextStyle(
-                                      color: AppColors.primary,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      decoration: TextDecoration.underline,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            const SizedBox(height: 20),
-
                             // Guest Login Button
                             Container(
                               height: 56,
@@ -358,6 +327,36 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                 ),
                               ),
+                            ),
+
+                            const SizedBox(height: 24),
+
+                            // Sign Up Link
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  'Don\'t have an account? ',
+                                  style: TextStyle(
+                                    color: AppColors.textSecondary,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    context.go('/sign-up');
+                                  },
+                                  child: const Text(
+                                    'Sign Up',
+                                    style: TextStyle(
+                                      color: AppColors.primary,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
 
                             const SizedBox(height: 20),
