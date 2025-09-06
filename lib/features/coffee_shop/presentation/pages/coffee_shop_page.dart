@@ -6,7 +6,6 @@ import '../../../../shared/widgets/categories_section.dart';
 import '../../../../shared/widgets/custom_bottom_nav_bar.dart';
 import '../../../coffee_details/presentation/pages/coffee_details_page.dart';
 import '../../../custom_orders/presentation/pages/custom_orders_page.dart';
-import '../../../checkout/presentation/pages/checkout_page.dart';
 import '../../../../core/models/order_item.dart';
 
 class CoffeeShopPage extends StatefulWidget {
@@ -31,9 +30,9 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
       case 0:
         return _buildHomePage();
       case 1:
-        return _buildCartPage();
+        return _buildOrdersPage(); // orders
       case 2:
-        return _buildOrdersPage();
+        return _buildHistoryPage();
       case 3:
         return _buildProfilePage();
       default:
@@ -44,30 +43,10 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
   // Reconstructed Home Page (replacing corrupted content)
   Widget _buildHomePage() {
     final coffees = [
-      {
-        'name': 'Cappuccino',
-        'size': 'Regular',
-        'price': 4.80,
-        'rating': 4.5,
-      },
-      {
-        'name': 'Latte',
-        'size': 'Regular',
-        'price': 4.60,
-        'rating': 4.6,
-      },
-      {
-        'name': 'Americano',
-        'size': 'Large',
-        'price': 5.10,
-        'rating': 4.4,
-      },
-      {
-        'name': 'Mocha',
-        'size': 'Small',
-        'price': 4.20,
-        'rating': 4.7,
-      },
+      {'name': 'Cappuccino', 'size': 'Regular', 'price': 4.80, 'rating': 4.5},
+      {'name': 'Latte', 'size': 'Regular', 'price': 4.60, 'rating': 4.6},
+      {'name': 'Americano', 'size': 'Large', 'price': 5.10, 'rating': 4.4},
+      {'name': 'Mocha', 'size': 'Small', 'price': 4.20, 'rating': 4.7},
     ];
 
     return SingleChildScrollView(
@@ -245,232 +224,230 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
     );
   }
 
-  Widget _buildCartPage() {
-    final cartItems = CartManager().cartItems;
-
+  Widget _buildHistoryPage() {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        backgroundColor: Colors.grey[100],
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black87),
-          onPressed: () {
-            setState(() {
-              _selectedIndex = 0; // Go back to home
-            });
-          },
-        ),
-        title: Text(
-          'Cart (${CartManager().itemCount})',
-          style: const TextStyle(
-            color: Colors.black87,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: cartItems.isEmpty
-          ? const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+      backgroundColor: const Color(0xFFF8F8F8),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Header
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+              child: Row(
                 children: [
-                  Icon(
-                    Icons.shopping_cart_outlined,
-                    size: 80,
-                    color: Colors.grey,
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'Your cart is empty',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.grey,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Add some coffee to get started!',
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                ],
-              ),
-            )
-          : Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(20),
-                    itemCount: cartItems.length,
-                    itemBuilder: (context, index) {
-                      final item = cartItems[index];
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 16),
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.08),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            // Coffee Image
-                            Container(
-                              width: 60,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[300],
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Icon(
-                                Icons.coffee,
-                                color: Colors.grey,
-                                size: 30,
-                              ),
-                            ),
-
-                            const SizedBox(width: 16),
-
-                            // Coffee Details
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '${item.coffeeName} x${item.quantity}',
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    '${item.size}, ${item.sugar}, ${item.ice}',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    item.formattedTotalPrice,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            // Remove Button
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () {
-                                setState(() {
-                                  CartManager().removeItem(index);
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      );
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedIndex = 0; // Go back to home
+                      });
                     },
-                  ),
-                ),
-
-                // Cart Summary
-                if (cartItems.isNotEmpty)
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back,
+                        color: Colors.black,
+                        size: 20,
                       ),
                     ),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Total:',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            Text(
-                              CartManager().formattedTotalPrice,
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
+                  ),
+                  const Expanded(
+                    child: Text(
+                      'Order History',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                        fontFamily: 'Inter',
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 36), // Balance the back button
+                ],
+              ),
+            ),
+
+            // Scrollable Content
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 30),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 24),
+
+                      // Previous Orders Section
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(14),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.04),
+                              blurRadius: 4,
+                              offset: const Offset(0, 4),
                             ),
                           ],
                         ),
-
-                        const SizedBox(height: 16),
-
-                        SizedBox(
-                          width: double.infinity,
-                          height: 56,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              if (CartManager().cartItems.isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Your cart is empty!'),
-                                    behavior: SnackBarBehavior.floating,
-                                  ),
-                                );
-                                return;
-                              }
-
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const CheckoutPage(),
-                                ),
-                              ).then((_) {
-                                // Refresh cart when returning from checkout
-                                setState(() {});
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF8B4513),
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                            ),
-                            child: const Text(
-                              'Checkout',
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Previous Orders',
                               style: TextStyle(
                                 fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                                fontFamily: 'Montserrat',
                               ),
                             ),
-                          ),
+                            const SizedBox(height: 18),
+
+                            // Mock previous orders
+                            _buildHistoryOrderItem(
+                              'Cappuccino x2',
+                              'Dec 2, 2024',
+                              '\$9.60',
+                              'Delivered',
+                              Colors.green,
+                            ),
+                            const SizedBox(height: 16),
+                            _buildHistoryOrderItem(
+                              'Latte x1, Americano x1',
+                              'Dec 1, 2024',
+                              '\$9.70',
+                              'Delivered',
+                              Colors.green,
+                            ),
+                            const SizedBox(height: 16),
+                            _buildHistoryOrderItem(
+                              'Mocha x3',
+                              'Nov 30, 2024',
+                              '\$12.60',
+                              'Delivered',
+                              Colors.green,
+                            ),
+                            const SizedBox(height: 16),
+                            _buildHistoryOrderItem(
+                              'Cappuccino x1',
+                              'Nov 29, 2024',
+                              '\$4.80',
+                              'Cancelled',
+                              Colors.red,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+
+                      const SizedBox(height: 40),
+                    ],
                   ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHistoryOrderItem(
+    String items,
+    String date,
+    String price,
+    String status,
+    Color statusColor,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[200]!),
+      ),
+      child: Row(
+        children: [
+          // Order Icon
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: const Color(0xFFC67C4E).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(
+              Icons.local_cafe,
+              color: Color(0xFFC67C4E),
+              size: 20,
+            ),
+          ),
+
+          const SizedBox(width: 16),
+
+          // Order Details
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  items,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                    fontFamily: 'Montserrat',
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  date,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                    fontFamily: 'Montserrat',
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  price,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFFC67C4E),
+                    fontFamily: 'Montserrat',
+                  ),
+                ),
               ],
             ),
+          ),
+
+          // Status
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: statusColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              status,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: statusColor,
+                fontFamily: 'Montserrat',
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -2197,7 +2174,6 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
       body: _buildBody(),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _selectedIndex,
-        cartItemCount: CartManager().itemCount,
         onTap: (index) {
           setState(() {
             _selectedIndex = index;
@@ -2329,25 +2305,47 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         IconButton(
-                                          constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
-                                          icon: const Icon(Icons.remove, size: 18),
+                                          constraints: const BoxConstraints(
+                                            minWidth: 36,
+                                            minHeight: 36,
+                                          ),
+                                          icon: const Icon(
+                                            Icons.remove,
+                                            size: 18,
+                                          ),
                                           padding: EdgeInsets.zero,
                                           onPressed: () {
-                                            cartManager.updateQuantity(index, item.quantity - 1);
+                                            cartManager.updateQuantity(
+                                              index,
+                                              item.quantity - 1,
+                                            );
                                             setModalState(() {});
                                             setState(() {});
                                           },
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 6),
-                                          child: Text('${item.quantity}', style: const TextStyle(fontWeight: FontWeight.w600)),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 6,
+                                          ),
+                                          child: Text(
+                                            '${item.quantity}',
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
                                         ),
                                         IconButton(
-                                          constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                                          constraints: const BoxConstraints(
+                                            minWidth: 36,
+                                            minHeight: 36,
+                                          ),
                                           icon: const Icon(Icons.add, size: 18),
                                           padding: EdgeInsets.zero,
                                           onPressed: () {
-                                            cartManager.updateQuantity(index, item.quantity + 1);
+                                            cartManager.updateQuantity(
+                                              index,
+                                              item.quantity + 1,
+                                            );
                                             setModalState(() {});
                                             setState(() {});
                                           },
@@ -2358,14 +2356,30 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
                                   // Size change (cycle)
                                   OutlinedButton(
                                     style: OutlinedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 14,
+                                        vertical: 10,
+                                      ),
                                       visualDensity: VisualDensity.compact,
                                     ),
                                     onPressed: () {
-                                      final cycle = ['Small','Regular','Large'];
-                                      final currentIdx = cycle.indexWhere((s) => s.toLowerCase() == item.size.toLowerCase());
-                                      final next = cycle[(currentIdx + 1) % cycle.length];
-                                      cartManager.updateItem(index, item.copyWith(size: next));
+                                      final cycle = [
+                                        'Small',
+                                        'Regular',
+                                        'Large',
+                                      ];
+                                      final currentIdx = cycle.indexWhere(
+                                        (s) =>
+                                            s.toLowerCase() ==
+                                            item.size.toLowerCase(),
+                                      );
+                                      final next =
+                                          cycle[(currentIdx + 1) %
+                                              cycle.length];
+                                      cartManager.updateItem(
+                                        index,
+                                        item.copyWith(size: next),
+                                      );
                                       setModalState(() {});
                                       setState(() {});
                                     },
@@ -2374,14 +2388,25 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
                                   // Sugar cycle
                                   OutlinedButton(
                                     style: OutlinedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 14,
+                                        vertical: 10,
+                                      ),
                                       visualDensity: VisualDensity.compact,
                                     ),
                                     onPressed: () {
-                                      final sugars = ['Less','Normal','More'];
-                                      final ci = sugars.indexWhere((s) => s.toLowerCase() == item.sugar.toLowerCase());
-                                      final next = sugars[(ci + 1) % sugars.length];
-                                      cartManager.updateItem(index, item.copyWith(sugar: next));
+                                      final sugars = ['Less', 'Normal', 'More'];
+                                      final ci = sugars.indexWhere(
+                                        (s) =>
+                                            s.toLowerCase() ==
+                                            item.sugar.toLowerCase(),
+                                      );
+                                      final next =
+                                          sugars[(ci + 1) % sugars.length];
+                                      cartManager.updateItem(
+                                        index,
+                                        item.copyWith(sugar: next),
+                                      );
                                       setModalState(() {});
                                       setState(() {});
                                     },
@@ -2390,14 +2415,24 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
                                   // Ice cycle
                                   OutlinedButton(
                                     style: OutlinedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 14,
+                                        vertical: 10,
+                                      ),
                                       visualDensity: VisualDensity.compact,
                                     ),
                                     onPressed: () {
-                                      final ices = ['No Ice','Less','Normal'];
-                                      final ci = ices.indexWhere((s) => s.toLowerCase() == item.ice.toLowerCase());
+                                      final ices = ['No Ice', 'Less', 'Normal'];
+                                      final ci = ices.indexWhere(
+                                        (s) =>
+                                            s.toLowerCase() ==
+                                            item.ice.toLowerCase(),
+                                      );
                                       final next = ices[(ci + 1) % ices.length];
-                                      cartManager.updateItem(index, item.copyWith(ice: next));
+                                      cartManager.updateItem(
+                                        index,
+                                        item.copyWith(ice: next),
+                                      );
                                       setModalState(() {});
                                       setState(() {});
                                     },

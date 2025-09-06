@@ -460,9 +460,9 @@ class _SignUpPageState extends State<SignUpPage> {
                               child: Material(
                                 color: Colors.transparent,
                                 child: InkWell(
-                  onTap: (_isLoading || _hasNavigated)
-                    ? null
-                    : _handleSignUp,
+                                  onTap: (_isLoading || _hasNavigated)
+                                      ? null
+                                      : _handleSignUp,
                                   borderRadius: BorderRadius.circular(16),
                                   child: Container(
                                     alignment: Alignment.center,
