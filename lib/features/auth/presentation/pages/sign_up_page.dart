@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../coffee_shop/presentation/pages/coffee_shop_page.dart';
+import '../../../../core/router/app_router.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -20,6 +20,7 @@ class _SignUpPageState extends State<SignUpPage> {
   bool _obscureConfirmPassword = true;
   bool _isLoading = false;
   bool _agreeToTerms = false;
+  bool _hasNavigated = false;
 
   void _handleSignUp() async {
     // Basic validation
@@ -55,24 +56,22 @@ class _SignUpPageState extends State<SignUpPage> {
     // Simulate sign up process
     await Future.delayed(const Duration(seconds: 2));
 
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
+    if (!mounted) return;
 
-      // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Account created successfully!'),
-          backgroundColor: AppColors.primary,
-        ),
-      );
+    setState(() {
+      _isLoading = false;
+      _hasNavigated = true;
+    });
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const CoffeeShopPage()),
-      );
-    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Account created successfully!'),
+        backgroundColor: AppColors.primary,
+      ),
+    );
+
+    // Replace with home route via GoRouter
+    context.go(AppRouter.home);
   }
 
   void _showSnackBar(String message) {
@@ -461,7 +460,9 @@ class _SignUpPageState extends State<SignUpPage> {
                               child: Material(
                                 color: Colors.transparent,
                                 child: InkWell(
-                                  onTap: _isLoading ? null : _handleSignUp,
+                  onTap: (_isLoading || _hasNavigated)
+                    ? null
+                    : _handleSignUp,
                                   borderRadius: BorderRadius.circular(16),
                                   child: Container(
                                     alignment: Alignment.center,

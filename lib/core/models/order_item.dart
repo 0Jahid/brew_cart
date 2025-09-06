@@ -111,6 +111,13 @@ class CartManager {
     }
   }
 
+  // Replace an existing item with a modified version (size/sugar/ice changes etc.)
+  void updateItem(int index, OrderItem newItem) {
+    if (index >= 0 && index < _cartItems.length) {
+      _cartItems[index] = newItem;
+    }
+  }
+
   void clearCart() {
     _cartItems.clear();
   }

@@ -37,205 +37,210 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
       case 3:
         return _buildProfilePage();
       default:
-        return _buildHomePage();
+        return const SizedBox.shrink();
     }
   }
 
+  // Reconstructed Home Page (replacing corrupted content)
   Widget _buildHomePage() {
-    return Container(
-      color: Colors.grey[100], // Light gray background
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 16),
+    final coffees = [
+      {
+        'name': 'Cappuccino',
+        'size': 'Regular',
+        'price': 4.80,
+        'rating': 4.5,
+      },
+      {
+        'name': 'Latte',
+        'size': 'Regular',
+        'price': 4.60,
+        'rating': 4.6,
+      },
+      {
+        'name': 'Americano',
+        'size': 'Large',
+        'price': 5.10,
+        'rating': 4.4,
+      },
+      {
+        'name': 'Mocha',
+        'size': 'Small',
+        'price': 4.20,
+        'rating': 4.7,
+      },
+    ];
 
-            // Categories Section
-            const CategoriesSection(),
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 12),
+          const CategoriesSection(),
+          const SizedBox(height: 24),
+          // Coffee Grid
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: coffees.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio: 0.72,
+              ),
+              itemBuilder: (context, index) {
+                final coffee = coffees[index];
+                return CoffeeCard(
+                  name: coffee['name'] as String,
+                  size: coffee['size'] as String,
+                  price: coffee['price'] as double,
+                  rating: coffee['rating'] as double,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CoffeeDetailsPage(
+                          coffeeId: 'coffee_$index',
+                          coffeeName: coffee['name'] as String,
+                          coffeePrice:
+                              '\$${(coffee['price'] as double).toStringAsFixed(2)}',
+                          coffeeSize: coffee['size'] as String,
+                          rating: coffee['rating'] as double,
+                          reviews: 1000 + index * 100,
+                        ),
+                      ),
+                    );
+                  },
+                  onAddPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CustomOrdersPage(
+                          coffeeId: 'coffee_$index',
+                          coffeeName: coffee['name'] as String,
+                          coffeePrice:
+                              '\$${(coffee['price'] as double).toStringAsFixed(2)}',
+                          rating: coffee['rating'] as double,
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
 
-            const SizedBox(height: 24),
+          const SizedBox(height: 32),
 
-            // Coffee Grid Section
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.75,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
+          // Popular Now Section
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Popular Now',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.brown[400],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        Icons.menu,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                  ],
                 ),
-                itemCount: 4, // Show 4 coffee cards initially
-                itemBuilder: (context, index) {
-                  // Different coffee varieties
-                  final coffeeTypes = [
-                    {'name': 'Cappuccino', 'price': 5.20, 'rating': 4.9},
-                    {'name': 'Latte', 'price': 4.80, 'rating': 4.7},
-                    {'name': 'Americano', 'price': 3.90, 'rating': 4.5},
-                    {'name': 'Espresso', 'price': 3.50, 'rating': 4.8},
-                  ];
 
-                  final coffee = coffeeTypes[index];
+                const SizedBox(height: 16),
 
-                  return CoffeeCard(
-                    name: coffee['name'] as String,
-                    size: '160 ml',
-                    price: coffee['price'] as double,
-                    rating: coffee['rating'] as double,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CoffeeDetailsPage(
-                            coffeeId: 'coffee_$index',
-                            coffeeName: coffee['name'] as String,
-                            coffeePrice:
-                                '\$${(coffee['price'] as double).toStringAsFixed(2)}',
-                            coffeeSize: '160 ml',
-                            rating: coffee['rating'] as double,
-                            reviews: 2453,
-                          ),
-                        ),
-                      );
-                    },
-                    onAddPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CustomOrdersPage(
-                            coffeeId: 'coffee_$index',
-                            coffeeName: coffee['name'] as String,
-                            coffeePrice:
-                                '\$${(coffee['price'] as double).toStringAsFixed(2)}',
-                            rating: coffee['rating'] as double,
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
-
-            const SizedBox(height: 32),
-
-            // Popular Now Section
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Popular Now',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87,
+                PopularCoffeeItem(
+                  name: 'Mocha Cappuccino',
+                  size: '160 ml',
+                  price: 5.20,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CoffeeDetailsPage(
+                          coffeeId: 'mocha_cappuccino',
+                          coffeeName: 'Mocha Cappuccino',
+                          coffeePrice: '\$5.20',
+                          coffeeSize: '160 ml',
+                          rating: 4.8,
+                          reviews: 1876,
                         ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.brown[400],
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Icon(
-                          Icons.menu,
-                          color: Colors.white,
-                          size: 20,
+                    );
+                  },
+                  onAddPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CustomOrdersPage(
+                          coffeeId: 'mocha_cappuccino',
+                          coffeeName: 'Mocha Cappuccino',
+                          coffeePrice: '\$5.20',
+                          rating: 4.8,
                         ),
                       ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Popular Coffee Items
-                  PopularCoffeeItem(
-                    name: 'Mocha Cappuccino',
-                    size: '160 ml',
-                    price: 5.20,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CoffeeDetailsPage(
-                            coffeeId: 'mocha_cappuccino',
-                            coffeeName: 'Mocha Cappuccino',
-                            coffeePrice: '\$5.20',
-                            coffeeSize: '160 ml',
-                            rating: 4.8,
-                            reviews: 1876,
-                          ),
+                    );
+                  },
+                  onRemovePressed: () {},
+                ),
+                PopularCoffeeItem(
+                  name: 'Cappuccino Latte',
+                  size: '160 ml',
+                  price: 5.20,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CoffeeDetailsPage(
+                          coffeeId: 'cappuccino_latte',
+                          coffeeName: 'Cappuccino Latte',
+                          coffeePrice: '\$5.20',
+                          coffeeSize: '160 ml',
+                          rating: 4.7,
+                          reviews: 2134,
                         ),
-                      );
-                    },
-                    onAddPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CustomOrdersPage(
-                            coffeeId: 'mocha_cappuccino',
-                            coffeeName: 'Mocha Cappuccino',
-                            coffeePrice: '\$5.20',
-                            rating: 4.8,
-                          ),
+                      ),
+                    );
+                  },
+                  onAddPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CustomOrdersPage(
+                          coffeeId: 'cappuccino_latte',
+                          coffeeName: 'Cappuccino Latte',
+                          coffeePrice: '\$5.20',
+                          rating: 4.7,
                         ),
-                      );
-                    },
-                    onRemovePressed: () {
-                      // TODO: Handle remove from cart
-                    },
-                  ),
-                  PopularCoffeeItem(
-                    name: 'Cappuccino Latte',
-                    size: '160 ml',
-                    price: 5.20,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CoffeeDetailsPage(
-                            coffeeId: 'cappuccino_latte',
-                            coffeeName: 'Cappuccino Latte',
-                            coffeePrice: '\$5.20',
-                            coffeeSize: '160 ml',
-                            rating: 4.7,
-                            reviews: 2134,
-                          ),
-                        ),
-                      );
-                    },
-                    onAddPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CustomOrdersPage(
-                            coffeeId: 'cappuccino_latte',
-                            coffeeName: 'Cappuccino Latte',
-                            coffeePrice: '\$5.20',
-                            rating: 4.7,
-                          ),
-                        ),
-                      );
-                    },
-                    onRemovePressed: () {
-                      // TODO: Handle remove from cart
-                    },
-                  ),
-                ],
-              ),
+                      ),
+                    );
+                  },
+                  onRemovePressed: () {},
+                ),
+              ],
             ),
+          ),
 
-            const SizedBox(
-              height: 100,
-            ), // Extra bottom padding for navigation bar
-          ],
-        ),
+          const SizedBox(height: 100), // Extra bottom padding for nav bar
+        ],
       ),
     );
   }
@@ -693,21 +698,26 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 5,
-                ),
-                decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFFC67C4E)),
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: const Text(
-                  'Edit',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFFC67C4E),
-                    fontFamily: 'Montserrat',
+                child: GestureDetector(
+                  onTap: () => _showEditItemsSheet(),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: const Color(0xFFC67C4E)),
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    child: const Text(
+                      'Edit',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFFC67C4E),
+                        fontFamily: 'Montserrat',
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -2195,6 +2205,242 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
         },
       ),
       extendBody: true,
+    );
+  }
+
+  void _showEditItemsSheet() {
+    final cartManager = CartManager();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            final items = cartManager.cartItems;
+            if (items.isEmpty) {
+              return Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('No items to edit'),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Close'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return Padding(
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 16,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 45,
+                      height: 5,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
+                  ),
+                  const Text(
+                    'Edit Items',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Montserrat',
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Flexible(
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        final item = items[index];
+                        return Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: const Color(0xFFE5E5E5)),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      item.coffeeName,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        fontFamily: 'Montserrat',
+                                      ),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    tooltip: 'Remove',
+                                    onPressed: () {
+                                      cartManager.removeItem(index);
+                                      setModalState(() {});
+                                      setState(() {});
+                                    },
+                                    icon: const Icon(
+                                      Icons.delete_outline,
+                                      color: Colors.redAccent,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              // Responsive control group (prevents horizontal overflow)
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  // Quantity selector
+                                  Container(
+                                    padding: const EdgeInsets.only(left: 4),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: const Color(0xFFC67C4E),
+                                      ),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                                          icon: const Icon(Icons.remove, size: 18),
+                                          padding: EdgeInsets.zero,
+                                          onPressed: () {
+                                            cartManager.updateQuantity(index, item.quantity - 1);
+                                            setModalState(() {});
+                                            setState(() {});
+                                          },
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 6),
+                                          child: Text('${item.quantity}', style: const TextStyle(fontWeight: FontWeight.w600)),
+                                        ),
+                                        IconButton(
+                                          constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                                          icon: const Icon(Icons.add, size: 18),
+                                          padding: EdgeInsets.zero,
+                                          onPressed: () {
+                                            cartManager.updateQuantity(index, item.quantity + 1);
+                                            setModalState(() {});
+                                            setState(() {});
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  // Size change (cycle)
+                                  OutlinedButton(
+                                    style: OutlinedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                      visualDensity: VisualDensity.compact,
+                                    ),
+                                    onPressed: () {
+                                      final cycle = ['Small','Regular','Large'];
+                                      final currentIdx = cycle.indexWhere((s) => s.toLowerCase() == item.size.toLowerCase());
+                                      final next = cycle[(currentIdx + 1) % cycle.length];
+                                      cartManager.updateItem(index, item.copyWith(size: next));
+                                      setModalState(() {});
+                                      setState(() {});
+                                    },
+                                    child: Text('Size: ${item.size}'),
+                                  ),
+                                  // Sugar cycle
+                                  OutlinedButton(
+                                    style: OutlinedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                      visualDensity: VisualDensity.compact,
+                                    ),
+                                    onPressed: () {
+                                      final sugars = ['Less','Normal','More'];
+                                      final ci = sugars.indexWhere((s) => s.toLowerCase() == item.sugar.toLowerCase());
+                                      final next = sugars[(ci + 1) % sugars.length];
+                                      cartManager.updateItem(index, item.copyWith(sugar: next));
+                                      setModalState(() {});
+                                      setState(() {});
+                                    },
+                                    child: Text('Sugar: ${item.sugar}'),
+                                  ),
+                                  // Ice cycle
+                                  OutlinedButton(
+                                    style: OutlinedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                      visualDensity: VisualDensity.compact,
+                                    ),
+                                    onPressed: () {
+                                      final ices = ['No Ice','Less','Normal'];
+                                      final ci = ices.indexWhere((s) => s.toLowerCase() == item.ice.toLowerCase());
+                                      final next = ices[(ci + 1) % ices.length];
+                                      cartManager.updateItem(index, item.copyWith(ice: next));
+                                      setModalState(() {});
+                                      setState(() {});
+                                    },
+                                    child: Text('Ice: ${item.ice}'),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Total: ${item.formattedTotalPrice}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      separatorBuilder: (_, __) => const SizedBox(height: 12),
+                      itemCount: items.length,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFC67C4E),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Done'),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../coffee_shop/presentation/pages/coffee_shop_page.dart';
+import '../../../../core/router/app_router.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -15,23 +15,34 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _isLoading = false;
+  bool _hasNavigated = false; // debounce to avoid multiple navigations
 
   void _handleLogin() async {
+    if (_isLoading || _hasNavigated) return; // prevent re-entry
     setState(() {
       _isLoading = true;
     });
 
-    // Simulate login process
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      // Simulate login delay / API call
+      await Future.delayed(const Duration(seconds: 2));
 
-    if (mounted) {
+      if (!mounted) return;
+
+      setState(() {
+        _isLoading = false;
+        _hasNavigated = true;
+      });
+
+      // Use GoRouter to replace current route
+      context.go(AppRouter.home);
+    } catch (e) {
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
       });
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const CoffeeShopPage()),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Login failed: $e')),
       );
     }
   }
@@ -306,13 +317,9 @@ class _LoginPageState extends State<LoginPage> {
                                 color: Colors.transparent,
                                 child: InkWell(
                                   onTap: () {
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const CoffeeShopPage(),
-                                      ),
-                                    );
+                                    if (_hasNavigated) return;
+                                    _hasNavigated = true;
+                                    context.go(AppRouter.home);
                                   },
                                   borderRadius: BorderRadius.circular(16),
                                   child: const Center(
