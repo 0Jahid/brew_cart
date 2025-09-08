@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../../core/services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -18,33 +19,36 @@ class _LoginPageState extends State<LoginPage> {
   bool _hasNavigated = false; // debounce to avoid multiple navigations
 
   void _handleLogin() async {
-    if (_isLoading || _hasNavigated) return; // prevent re-entry
-    setState(() {
-      _isLoading = true;
-    });
-
+    if (_isLoading || _hasNavigated) return;
+    final email = _emailController.text.trim();
+    final pass = _passwordController.text.trim();
+    if (email.isEmpty || pass.isEmpty) {
+      _showSnack('Please enter email and password');
+      return;
+    }
+    setState(() => _isLoading = true);
     try {
-      // Simulate login delay / API call
-      await Future.delayed(const Duration(seconds: 2));
-
+      await AuthService.instance.signIn(email, pass);
       if (!mounted) return;
-
       setState(() {
         _isLoading = false;
         _hasNavigated = true;
       });
-
-      // Use GoRouter to replace current route
       context.go(AppRouter.home);
     } catch (e) {
       if (!mounted) return;
-      setState(() {
-        _isLoading = false;
-      });
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Login failed: $e')));
+      setState(() => _isLoading = false);
+      _showSnack('Login failed: ${_mapError(e)}');
     }
+  }
+
+  void _showSnack(String msg) =>
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+  String _mapError(Object e) {
+    final s = e.toString();
+    if (s.contains('user-not-found')) return 'User not found';
+    if (s.contains('wrong-password')) return 'Wrong password';
+    return s;
   }
 
   @override

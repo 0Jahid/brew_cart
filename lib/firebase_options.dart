@@ -34,11 +34,11 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'REPLACE_ME',
-    appId: 'REPLACE_ME',
-    messagingSenderId: 'REPLACE_ME',
-    projectId: 'REPLACE_ME',
-    storageBucket: 'REPLACE_ME',
+    apiKey: 'AIzaSyAVySVmezj8_9oYJYbMW6gtE2nXCKp5ZUw',
+    appId: '1:855291764712:android:a784427ad3118955188e5d',
+    messagingSenderId: '855291764712',
+    projectId: 'coffeeshop-1dc79',
+    storageBucket: 'coffeeshop-1dc79.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(

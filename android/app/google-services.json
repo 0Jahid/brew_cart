@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "455017929618",
-    "project_id": "brewcart-786d6",
-    "storage_bucket": "brewcart-786d6.firebasestorage.app"
+    "project_number": "855291764712",
+    "project_id": "coffeeshop-1dc79",
+    "storage_bucket": "coffeeshop-1dc79.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:455017929618:android:c865e067ce3fa87b81ff4b",
+        "mobilesdk_app_id": "1:855291764712:android:a784427ad3118955188e5d",
         "android_client_info": {
           "package_name": "com.example.brew_cart"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAatxBHEACSMHsGYbQZ5b3Bg975XHIeyPo"
+          "current_key": "AIzaSyAVySVmezj8_9oYJYbMW6gtE2nXCKp5ZUw"
         }
       ],
       "services": {

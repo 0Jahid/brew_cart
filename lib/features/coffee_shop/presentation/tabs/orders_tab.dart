@@ -18,7 +18,11 @@ class OrdersTab extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.shopping_bag_outlined, size: 72, color: Colors.brown),
+                const Icon(
+                  Icons.shopping_bag_outlined,
+                  size: 72,
+                  color: Colors.brown,
+                ),
                 const SizedBox(height: 24),
                 const Text(
                   'Orders tab reset',
@@ -69,7 +73,10 @@ class OrdersTab extends StatelessWidget {
           '5. Order confirmation flow',
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
         ],
       ),
     );

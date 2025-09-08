@@ -1,4 +1,7 @@
 import 'package:go_router/go_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'dart:async';
 
 import '../../features/splash/presentation/pages/splash_page.dart';
 import '../../features/auth/presentation/pages/login_page_new.dart';
@@ -23,6 +26,21 @@ class AppRouter {
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
+    refreshListenable: GoRouterRefreshStream(
+      FirebaseAuth.instance.authStateChanges(),
+    ),
+    redirect: (context, state) {
+      final user = FirebaseAuth.instance.currentUser;
+      final loggingIn =
+          state.uri.toString() == login || state.uri.toString() == signUp;
+      if (user == null && !loggingIn) {
+        return login;
+      }
+      if (user != null && (loggingIn || state.uri.toString() == splash)) {
+        return home;
+      }
+      return null;
+    },
     routes: [
       GoRoute(path: splash, builder: (context, state) => const SplashPage()),
       GoRoute(path: login, builder: (context, state) => const LoginPage()),
@@ -56,4 +74,17 @@ class AppRouter {
       GoRoute(path: profile, builder: (context, state) => const ProfilePage()),
     ],
   );
+}
+
+// Helper to trigger GoRouter refresh on auth state changes.
+class GoRouterRefreshStream extends ChangeNotifier {
+  GoRouterRefreshStream(Stream<dynamic> stream) {
+    _sub = stream.listen((_) => notifyListeners());
+  }
+  late final StreamSubscription<dynamic> _sub;
+  @override
+  void dispose() {
+    _sub.cancel();
+    super.dispose();
+  }
 }

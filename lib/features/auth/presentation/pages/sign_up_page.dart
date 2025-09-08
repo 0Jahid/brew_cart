@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../../core/services/auth_service.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -23,55 +24,46 @@ class _SignUpPageState extends State<SignUpPage> {
   bool _hasNavigated = false;
 
   void _handleSignUp() async {
-    // Basic validation
-    if (_nameController.text.trim().isEmpty) {
-      _showSnackBar('Please enter your name');
-      return;
+    final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
+    final phone = _phoneController.text.trim();
+    final pass = _passwordController.text.trim();
+    final confirm = _confirmPasswordController.text.trim();
+    if (name.isEmpty) return _showSnackBar('Please enter your name');
+    if (email.isEmpty) return _showSnackBar('Please enter your email');
+    if (phone.isEmpty) return _showSnackBar('Please enter your phone number');
+    if (pass.isEmpty) return _showSnackBar('Please enter a password');
+    if (pass != confirm) return _showSnackBar('Passwords do not match');
+    if (!_agreeToTerms)
+      return _showSnackBar('Please agree to the Terms and Conditions');
+    if (_isLoading || _hasNavigated) return;
+    setState(() => _isLoading = true);
+    try {
+      await AuthService.instance.signUp(
+        name: name,
+        email: email,
+        password: pass,
+        phone: phone,
+      );
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _hasNavigated = true;
+      });
+      _showSnackBar('Account created successfully!');
+      context.go(AppRouter.home);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      _showSnackBar(_mapError(e));
     }
-    if (_emailController.text.trim().isEmpty) {
-      _showSnackBar('Please enter your email');
-      return;
-    }
-    if (_phoneController.text.trim().isEmpty) {
-      _showSnackBar('Please enter your phone number');
-      return;
-    }
-    if (_passwordController.text.trim().isEmpty) {
-      _showSnackBar('Please enter a password');
-      return;
-    }
-    if (_passwordController.text != _confirmPasswordController.text) {
-      _showSnackBar('Passwords do not match');
-      return;
-    }
-    if (!_agreeToTerms) {
-      _showSnackBar('Please agree to the Terms and Conditions');
-      return;
-    }
+  }
 
-    setState(() {
-      _isLoading = true;
-    });
-
-    // Simulate sign up process
-    await Future.delayed(const Duration(seconds: 2));
-
-    if (!mounted) return;
-
-    setState(() {
-      _isLoading = false;
-      _hasNavigated = true;
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Account created successfully!'),
-        backgroundColor: AppColors.primary,
-      ),
-    );
-
-    // Replace with home route via GoRouter
-    context.go(AppRouter.home);
+  String _mapError(Object e) {
+    final s = e.toString();
+    if (s.contains('email-already-in-use')) return 'Email already in use';
+    if (s.contains('weak-password')) return 'Password too weak';
+    return s;
   }
 
   void _showSnackBar(String message) {
