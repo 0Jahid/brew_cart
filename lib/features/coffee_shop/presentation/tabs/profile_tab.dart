@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../../core/services/auth_service.dart';
 
 class ProfileTab extends StatelessWidget {
   const ProfileTab({super.key, required this.onBack});
   final VoidCallback onBack;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+  final user = FirebaseAuth.instance.currentUser;
+  return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         backgroundColor: Colors.grey[100],
@@ -25,11 +29,11 @@ class ProfileTab extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
+  body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            _ProfileHeader(),
+    _ProfileHeader(user: user),
             const SizedBox(height: 24),
             const _MembershipCard(),
             const SizedBox(height: 24),
@@ -183,8 +187,9 @@ class ProfileTab extends StatelessWidget {
           child: const Text('Cancel'),
         ),
         ElevatedButton(
-          onPressed: () {
-            Navigator.pop(c);
+          onPressed: () async {
+            await AuthService.instance.signOut();
+            if (c.mounted) Navigator.pop(c);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.red[600],
@@ -221,8 +226,93 @@ class _MenuSection extends StatelessWidget {
 }
 
 class _ProfileHeader extends StatelessWidget {
+  const _ProfileHeader({required this.user});
+  final User? user;
+
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) {
+    if (user == null) {
+      return _shell(child: const Text('Not signed in'));
+    }
+    final docRef = FirebaseFirestore.instance.collection('users').doc(user!.uid);
+    return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+      stream: docRef.snapshots(),
+      builder: (context, snap) {
+        if (snap.connectionState == ConnectionState.waiting) {
+          return _shell(child: const CircularProgressIndicator());
+        }
+        if (snap.hasError) {
+          return _shell(child: Text('Error: ${snap.error}'));
+        }
+        final data = snap.data?.data() ?? {};
+        final name = (data['name'] as String?)?.trim().isNotEmpty == true
+            ? (data['name'] as String)
+            : (user!.displayName ?? user!.email ?? 'User');
+        final email = user!.email ?? (data['email'] as String? ?? '');
+        final orders = (data['ordersCount'] ?? 0).toString();
+        final points = (data['points'] ?? 0).toString();
+        final rewards = (data['rewardsCount'] ?? 0).toString();
+        return _shell(
+          child: Column(
+            children: [
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFF8B4513), Color(0xFFA0522D)],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF8B4513).withValues(alpha: 0.3),
+                      blurRadius: 15,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: const Icon(Icons.person, size: 50, color: Colors.white),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                name,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                  fontFamily: 'Montserrat',
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                email,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                  fontFamily: 'Montserrat',
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _StatItem(label: 'Orders', value: orders),
+                  const _Divider(),
+                  _StatItem(label: 'Points', value: points),
+                  const _Divider(),
+                  _StatItem(label: 'Rewards', value: rewards),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _shell({required Widget child}) => Container(
     width: double.infinity,
     padding: const EdgeInsets.all(24),
     decoration: BoxDecoration(
@@ -236,60 +326,7 @@ class _ProfileHeader extends StatelessWidget {
         ),
       ],
     ),
-    child: Column(
-      children: [
-        Container(
-          width: 100,
-          height: 100,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFF8B4513), Color(0xFFA0522D)],
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF8B4513).withValues(alpha: 0.3),
-                blurRadius: 15,
-                offset: const Offset(0, 5),
-              ),
-            ],
-          ),
-          child: const Icon(Icons.person, size: 50, color: Colors.white),
-        ),
-        const SizedBox(height: 16),
-        const Text(
-          'Jahid Rahman',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-            fontFamily: 'Montserrat',
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'jahid@brew-cart.com',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.grey[600],
-            fontFamily: 'Montserrat',
-          ),
-        ),
-        const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: const [
-            _StatItem(label: 'Orders', value: '24'),
-            _Divider(),
-            _StatItem(label: 'Points', value: '1,200'),
-            _Divider(),
-            _StatItem(label: 'Rewards', value: '3'),
-          ],
-        ),
-      ],
-    ),
+    child: Center(child: child),
   );
 }
 
