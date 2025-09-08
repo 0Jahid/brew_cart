@@ -41,7 +41,7 @@ class CustomBottomNavBar extends StatelessWidget {
             ),
             _buildNavItem(
               index: 1,
-              iconPath: 'assets/icons/shopping-bag.svg',
+              iconPath: 'assets/icons/shopping_bag.svg',
               label: 'Cart',
             ),
             _buildNavItem(
