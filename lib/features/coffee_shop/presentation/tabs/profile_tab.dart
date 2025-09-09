@@ -8,8 +8,8 @@ class ProfileTab extends StatelessWidget {
   final VoidCallback onBack;
   @override
   Widget build(BuildContext context) {
-  final user = FirebaseAuth.instance.currentUser;
-  return Scaffold(
+    final user = FirebaseAuth.instance.currentUser;
+    return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         backgroundColor: Colors.grey[100],
@@ -29,11 +29,11 @@ class ProfileTab extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-  body: SingleChildScrollView(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-    _ProfileHeader(user: user),
+            _ProfileHeader(user: user),
             const SizedBox(height: 24),
             const _MembershipCard(),
             const SizedBox(height: 24),
@@ -234,7 +234,9 @@ class _ProfileHeader extends StatelessWidget {
     if (user == null) {
       return _shell(child: const Text('Not signed in'));
     }
-    final docRef = FirebaseFirestore.instance.collection('users').doc(user!.uid);
+    final docRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user!.uid);
     return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
       stream: docRef.snapshots(),
       builder: (context, snap) {

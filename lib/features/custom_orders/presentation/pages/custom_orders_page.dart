@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/models/order_item.dart';
+import '../../../../core/models/product.dart';
 import '../../../checkout/presentation/pages/checkout_page.dart';
 
 class CustomOrdersPage extends StatefulWidget {
   final String coffeeId;
+  final String? categoryId; // For Firestore nested path
   final String? coffeeName;
   final String? coffeePrice;
   final double? rating;
@@ -12,6 +15,7 @@ class CustomOrdersPage extends StatefulWidget {
   const CustomOrdersPage({
     super.key,
     required this.coffeeId,
+    this.categoryId,
     this.coffeeName,
     this.coffeePrice,
     this.rating,
@@ -22,19 +26,90 @@ class CustomOrdersPage extends StatefulWidget {
 }
 
 class _CustomOrdersPageState extends State<CustomOrdersPage> {
-  String selectedSize = 'Regular';
-  String selectedSugar = 'Normal Sugar';
-  String selectedIce = 'No Ice';
+  String? selectedSize;
+  String? selectedSugar;
+  String selectedIce = 'Normal Ice';
   int quantity = 1;
 
-  final List<String> sizeOptions = ['Small', 'Regular', 'Large'];
-  final List<String> sugarOptions = ['Normal Sugar', 'Less Sugar', 'No Sugar'];
-  final List<String> iceOptions = ['Normal Ice', 'Less Ice', 'No Ice'];
+  List<String> sizeOptions = const [];
+  List<String> sugarOptions = const [];
+  final List<String> iceOptions = const ['Normal Ice', 'Less Ice', 'No Ice'];
+
+  ProductModel? _product; // Loaded firestore product
+  bool _loading = false;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProduct();
+  }
+
+  Future<void> _loadProduct() async {
+    if (widget.categoryId == null) return; // fallback to static defaults
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('categories')
+          .doc(widget.categoryId)
+          .collection('products')
+          .doc(widget.coffeeId)
+          .get();
+      if (!doc.exists) {
+        setState(() {
+          _error = 'Product not found';
+          _loading = false;
+        });
+        return;
+      }
+      final prod = ProductModel.fromDoc(widget.categoryId!, doc);
+      final sizes = prod.sizes.keys.map((e) => e.toString()).toList();
+      final customizations = prod.customizations;
+      final sugar = (customizations['sugar'] as List<dynamic>? ?? [])
+          .map((e) => e.toString())
+          .toList();
+      setState(() {
+        _product = prod;
+        sizeOptions = sizes.isEmpty ? ['Regular'] : sizes;
+        sugarOptions = sugar.isEmpty
+            ? ['Normal Sugar', 'Less Sugar', 'No Sugar']
+            : sugar;
+        selectedSize = sizeOptions.first;
+        selectedSugar = sugarOptions.first;
+        _loading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _loading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final coffeeName = widget.coffeeName ?? 'Cappuccino';
-    final coffeePrice = widget.coffeePrice ?? '\$5.20';
+    final coffeeName = widget.coffeeName ?? _product?.name ?? 'Coffee';
+    final basePrice = _product?.firstPrice() ?? 0;
+    final displayPrice =
+        widget.coffeePrice ??
+        (basePrice > 0 ? '\$${basePrice.toStringAsFixed(2)}' : '\$0.00');
+
+    if (_loading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (_error != null) {
+      return Scaffold(
+        appBar: AppBar(),
+        body: Center(child: Text(_error!)),
+      );
+    }
+    selectedSize ??= (sizeOptions.isNotEmpty ? sizeOptions.first : 'Regular');
+    selectedSugar ??= (sugarOptions.isNotEmpty
+        ? sugarOptions.first
+        : 'Normal Sugar');
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F8F8),
@@ -107,18 +182,21 @@ class _CustomOrdersPageState extends State<CustomOrdersPage> {
                           ),
                         ),
                         const SizedBox(width: 14),
-                        Text(
-                          coffeeName,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF1C1310),
+                        Flexible(
+                          child: Text(
+                            coffeeName,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF1C1310),
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
                     ),
                     Text(
-                      coffeePrice,
+                      displayPrice,
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -135,7 +213,7 @@ class _CustomOrdersPageState extends State<CustomOrdersPage> {
               _buildSelectionSection(
                 'Size',
                 sizeOptions,
-                selectedSize,
+                selectedSize!,
                 (value) => setState(() => selectedSize = value),
               ),
 
@@ -145,7 +223,7 @@ class _CustomOrdersPageState extends State<CustomOrdersPage> {
               _buildSelectionSection(
                 'Sugar',
                 sugarOptions,
-                selectedSugar,
+                selectedSugar!,
                 (value) => setState(() => selectedSugar = value),
               ),
 
@@ -328,7 +406,7 @@ class _CustomOrdersPageState extends State<CustomOrdersPage> {
                 ),
               ),
               Text(
-                'Mandatory Select one',
+                'Select one',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
@@ -410,13 +488,17 @@ class _CustomOrdersPageState extends State<CustomOrdersPage> {
     // Create order item
     final orderItem = OrderItem(
       coffeeId: widget.coffeeId,
-      coffeeName: widget.coffeeName ?? 'Cappuccino',
-      coffeePrice: widget.coffeePrice ?? '\$5.20',
-      size: selectedSize,
-      sugar: selectedSugar,
+      coffeeName: widget.coffeeName ?? _product?.name ?? 'Coffee',
+      coffeePrice:
+          widget.coffeePrice ??
+          (_product != null
+              ? '\$${_product!.firstPrice().toStringAsFixed(2)}'
+              : '\$0.00'),
+      size: selectedSize ?? 'Regular',
+      sugar: selectedSugar ?? 'Normal Sugar',
       ice: selectedIce,
       quantity: quantity,
-      rating: widget.rating,
+      rating: widget.rating ?? _product?.ratingAverage,
     );
 
     // Add to cart

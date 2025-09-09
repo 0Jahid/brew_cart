@@ -14,10 +14,16 @@ class AuthService {
   User? get currentUser => _auth.currentUser;
 
   Future<UserCredential> signIn(String email, String password) async {
-    return _auth.signInWithEmailAndPassword(
+    final cred = await _auth.signInWithEmailAndPassword(
       email: email.trim(),
       password: password.trim(),
     );
+    // Ensure counters exist for legacy users
+    await _ensureUserDoc(
+      uid: cred.user!.uid,
+      data: {'ordersCount': 0, 'points': 0, 'rewardsCount': 0},
+    );
+    return cred;
   }
 
   Future<UserCredential> signUp({
@@ -39,6 +45,9 @@ class AuthService {
         'phone': phone?.trim(),
         'createdAt': FieldValue.serverTimestamp(),
         'roles': ['user'],
+        'ordersCount': 0,
+        'points': 0,
+        'rewardsCount': 0,
       },
     );
     return credential;
@@ -102,6 +111,9 @@ class AuthService {
             'phone': u['phone'],
             'createdAt': FieldValue.serverTimestamp(),
             'roles': ['user'],
+            'ordersCount': 0,
+            'points': 0,
+            'rewardsCount': 0,
           },
         );
       } on FirebaseAuthException catch (e) {
@@ -119,6 +131,9 @@ class AuthService {
               'phone': u['phone'],
               'createdAt': FieldValue.serverTimestamp(),
               'roles': ['user'],
+              'ordersCount': 0,
+              'points': 0,
+              'rewardsCount': 0,
             },
           );
         }

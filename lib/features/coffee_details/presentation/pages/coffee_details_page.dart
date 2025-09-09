@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/models/product.dart';
 import '../../../custom_orders/presentation/pages/custom_orders_page.dart';
 
 class CoffeeDetailsPage extends StatefulWidget {
-  final String coffeeId;
-  final String? coffeeName;
+  final String coffeeId; // product id
+  final String? categoryId; // optional, speeds up lookup
+  final String? coffeeName; // fallback pre-fetched values
   final String? coffeePrice;
   final String? coffeeSize;
   final double? rating;
@@ -13,6 +16,7 @@ class CoffeeDetailsPage extends StatefulWidget {
   const CoffeeDetailsPage({
     super.key,
     required this.coffeeId,
+    this.categoryId,
     this.coffeeName,
     this.coffeePrice,
     this.coffeeSize,
@@ -26,14 +30,78 @@ class CoffeeDetailsPage extends StatefulWidget {
 
 class _CoffeeDetailsPageState extends State<CoffeeDetailsPage> {
   bool isFavorited = false;
+  ProductModel? _product;
+  bool _loading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProduct();
+  }
+
+  Future<void> _loadProduct() async {
+    try {
+      DocumentSnapshot? doc;
+      if (widget.categoryId != null) {
+        doc = await FirebaseFirestore.instance
+            .collection('categories')
+            .doc(widget.categoryId)
+            .collection('products')
+            .doc(widget.coffeeId)
+            .get();
+        if (!doc.exists) doc = null;
+      }
+      if (doc == null) {
+        // Fallback: search via collectionGroup (ensure index if filtering further later)
+        final cg = await FirebaseFirestore.instance
+            .collectionGroup('products')
+            .where(FieldPath.documentId, isEqualTo: widget.coffeeId)
+            .limit(1)
+            .get();
+        if (cg.docs.isNotEmpty) doc = cg.docs.first;
+      }
+      if (doc == null || !doc.exists) {
+        setState(() {
+          _error = 'Product not found';
+          _loading = false;
+        });
+        return;
+      }
+      final prod = ProductModel.fromGroupDoc(doc);
+      setState(() {
+        _product = prod;
+        _loading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _loading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     // Use provided data or defaults
-    final coffeeName = widget.coffeeName ?? 'Cappuccino';
-    final coffeePrice = widget.coffeePrice ?? '\$5.20';
-    final rating = widget.rating ?? 4.9;
-    final reviews = widget.reviews ?? 2453;
+    if (_loading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (_error != null) {
+      return Scaffold(
+        appBar: AppBar(),
+        body: Center(child: Text(_error!)),
+      );
+    }
+    final prod = _product;
+    final coffeeName = prod?.name ?? widget.coffeeName ?? 'Coffee';
+    final rating = prod?.ratingAverage ?? widget.rating ?? 0.0;
+    final reviews = prod?.ratingCount ?? widget.reviews ?? 0;
+    final firstSize = prod?.firstSizeLabel();
+    final price = prod != null ? prod.firstPrice() : 0.0;
+    final coffeePrice = prod != null
+        ? '\$${price.toStringAsFixed(2)}'
+        : (widget.coffeePrice ?? '\$0.00');
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -94,22 +162,26 @@ class _CoffeeDetailsPageState extends State<CoffeeDetailsPage> {
               child: Stack(
                 alignment: Alignment.bottomCenter,
                 children: [
-                  // Coffee Image Placeholder
-                  Center(
-                    child: Container(
-                      width: 350,
-                      height: 380,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Icon(
-                        Icons.coffee,
-                        size: 100,
-                        color: AppColors.primary.withOpacity(0.6),
+                  if (prod?.imageUrl != null)
+                    Positioned.fill(
+                      child: Image.network(prod!.imageUrl!, fit: BoxFit.cover),
+                    )
+                  else
+                    Center(
+                      child: Container(
+                        width: 350,
+                        height: 380,
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Icon(
+                          Icons.coffee,
+                          size: 100,
+                          color: AppColors.primary.withOpacity(0.6),
+                        ),
                       ),
                     ),
-                  ),
 
                   // Coffee Info Overlay
                   Container(
@@ -220,28 +292,12 @@ class _CoffeeDetailsPageState extends State<CoffeeDetailsPage> {
                       const SizedBox(height: 16),
 
                       // Description Text
-                      RichText(
-                        text: TextSpan(
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Color(0xFF606060),
-                            fontFamily: 'Roboto',
-                            height: 1.4,
-                          ),
-                          children: [
-                            const TextSpan(
-                              text:
-                                  'Cappuccino is a coffee drink appreciated by many people for its harmony between the strong taste of coffee, the warmth of milk and the soft texture of milk foam. Its balanced taste and distinctive texture make it a popular choice',
-                            ),
-                            const TextSpan(text: '. '),
-                            TextSpan(
-                              text: 'Read More...',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.primary,
-                              ),
-                            ),
-                          ],
+                      Text(
+                        prod?.description ?? 'No description provided.',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF606060),
+                          height: 1.4,
                         ),
                       ),
 

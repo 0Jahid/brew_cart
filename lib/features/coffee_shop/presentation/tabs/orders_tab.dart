@@ -1,82 +1,426 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../../core/models/order_item.dart';
+import '../../../../core/services/auth_service.dart';
 
-// Simplified placeholder OrdersTab to restore a compiling state.
-// Original complex implementation was removed due to structural corruption.
-// We'll rebuild features (address, items, promo, payment) incrementally.
-class OrdersTab extends StatelessWidget {
+class OrdersTab extends StatefulWidget {
   const OrdersTab({super.key, required this.onBack});
   final VoidCallback onBack;
+  @override
+  State<OrdersTab> createState() => _OrdersTabState();
+}
+
+class _OrdersTabState extends State<OrdersTab> {
+  final cart = CartManager();
+  final promoController = TextEditingController();
+  String? appliedPromoCode;
+  String? promoError;
+  double promoDiscount = 0.0; // monetary amount
+  String paymentMethod = 'Cash';
+  bool placing = false;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
-                  Icons.shopping_bag_outlined,
-                  size: 72,
-                  color: Colors.brown,
-                ),
-                const SizedBox(height: 24),
-                const Text(
-                  'Orders tab reset',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  'We\'ve temporarily replaced the previous broken implementation. '
-                  'Next step: reintroduce cart editing & payment summary.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.brown.withOpacity(0.75)),
-                ),
-                const SizedBox(height: 28),
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: [
-                    FilledButton(
-                      onPressed: onBack,
-                      child: const Text('Back to shop'),
-                    ),
-                    OutlinedButton(
-                      onPressed: () => _showInfo(context),
-                      child: const Text('What\'s next?'),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+  void dispose() {
+    promoController.dispose();
+    super.dispose();
+  }
+
+  double get subtotal => cart.totalPrice;
+  static const double deliveryFee = 2.00;
+  static const double serviceFee = 1.00;
+  double get total => (subtotal - promoDiscount) + deliveryFee + serviceFee;
+
+  Future<void> _applyPromo() async {
+    final code = promoController.text.trim().toUpperCase();
+    if (code.isEmpty) return;
+    setState(() {
+      promoError = null;
+      appliedPromoCode = null;
+      promoDiscount = 0;
+    });
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('promo_codes')
+          .doc(code)
+          .get();
+      if (!doc.exists) {
+        setState(() => promoError = 'Code not found');
+        return;
+      }
+      final data = doc.data()!;
+      if (!(data['isActive'] as bool? ?? false)) {
+        setState(() => promoError = 'Code inactive');
+        return;
+      }
+      final minOrder = (data['minOrder'] as num?)?.toDouble() ?? 0;
+      if (subtotal < minOrder) {
+        setState(() => promoError = 'Min order \$${minOrder.toStringAsFixed(2)}');
+        return;
+      }
+      final type = data['type'];
+      double discount = 0;
+      if (type == 'percent') {
+        final percent = (data['value'] as num?)?.toDouble() ?? 0;
+        discount = subtotal * (percent / 100);
+        final maxDisc = (data['maxDiscount'] as num?)?.toDouble();
+        if (maxDisc != null) discount = discount.clamp(0, maxDisc);
+      } else if (type == 'amount') {
+        discount = (data['value'] as num?)?.toDouble() ?? 0;
+      }
+      setState(() {
+        appliedPromoCode = code;
+        promoDiscount = discount;
+      });
+    } catch (e) {
+      setState(() => promoError = 'Error: $e');
+    }
+  }
+
+  Future<void> _placeOrder() async {
+    if (cart.cartItems.isEmpty) return;
+    final user = AuthService.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please sign in')),);
+      return;
+    }
+    setState(() => placing = true);
+    try {
+      final orderRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('orders')
+          .doc();
+      await orderRef.set({
+        'createdAt': FieldValue.serverTimestamp(),
+        'status': 'pending',
+        'items': [
+          for (final i in cart.cartItems)
+            {
+              'coffeeId': i.coffeeId,
+              'name': i.coffeeName,
+              'size': i.size,
+              'sugar': i.sugar,
+              'ice': i.ice,
+              'qty': i.quantity,
+              'unitPrice': double.tryParse(i.coffeePrice.replaceAll('\$', '')) ?? 0,
+              'total': i.totalPrice,
+            }
+        ],
+        'subtotal': subtotal,
+        'deliveryFee': deliveryFee,
+        'serviceFee': serviceFee,
+        'promoCode': appliedPromoCode,
+        'promoDiscount': promoDiscount,
+        'total': total,
+        'paymentMethod': paymentMethod,
+      });
+      cart.clearCart();
+      setState(() {
+        appliedPromoCode = null;
+        promoDiscount = 0;
+      });
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text('Order Placed'),
+            content: Text('Total: \$${total.toStringAsFixed(2)}'),
+            actions: [
+              TextButton(
+                onPressed: () { Navigator.pop(context); },
+                child: const Text('OK'),
+              )
+            ],
           ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to place order: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => placing = false);
+    }
+  }
+
+  void _changePayment() {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final m in ['Cash','Card','Wallet'])
+              RadioListTile<String>(
+                title: Text(m),
+                value: m,
+                groupValue: paymentMethod,
+                onChanged: (v) { setState(() => paymentMethod = v!); Navigator.pop(context); },
+              ),
+          ],
         ),
       ),
     );
   }
 
-  void _showInfo(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Upcoming Work'),
-        content: const Text(
-          'We will rebuild:\n\n'
-          '1. Cart item list & quantity modifiers\n'
-          '2. Promo code + validation\n'
-          '3. Payment summary & currency cleanup\n'
-          '4. Payment method picker\n'
-          '5. Order confirmation flow',
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8F8F8),
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildHeader(),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                child: Column(
+                  children: [
+                    _buildCartList(),
+                    const SizedBox(height: 16),
+                    _buildPromoSection(),
+                    const SizedBox(height: 16),
+                    _buildSummaryCard(),
+                    const SizedBox(height: 16),
+                    _buildPaymentMethodCard(),
+                    const SizedBox(height: 32),
+                  ],
+                ),
+              ),
+            ),
+            _buildPlaceOrderBar(),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: widget.onBack,
           ),
+          const Expanded(
+            child: Text(
+              'Your Cart',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+          ),
+          const SizedBox(width: 48),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCartList() {
+    final items = cart.cartItems;
+    if (items.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(32),
+        decoration: _cardDecoration(),
+        child: const Column(
+          children: [
+            Icon(Icons.shopping_cart_outlined, size: 48, color: Colors.grey),
+            SizedBox(height: 12),
+            Text('Your cart is empty'),
+          ],
+        ),
+      );
+    }
+    return Container(
+      decoration: _cardDecoration(),
+      child: ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: items.length,
+        separatorBuilder: (_, __) => const Divider(height: 1),
+        itemBuilder: (context, index) {
+          final it = items[index];
+          return ListTile(
+            title: Text(it.coffeeName),
+            subtitle: Text('${it.size} • ${it.sugar} • ${it.ice}'),
+            leading: CircleAvatar(backgroundColor: Colors.brown.shade100, child: const Icon(Icons.coffee)),
+            trailing: SizedBox(
+              width: 130,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  _qtyBtn(index, -1),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Text(it.quantity.toString()),
+                  ),
+                  _qtyBtn(index, 1),
+                  const SizedBox(width: 8),
+                  Text('\$${it.totalPrice.toStringAsFixed(2)}'),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _qtyBtn(int index, int delta) {
+    return InkWell(
+      onTap: () {
+        final current = cart.cartItems[index].quantity;
+        cart.updateQuantity(index, current + delta);
+        setState(() {});
+      },
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: Colors.brown.shade200,
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Icon(delta > 0 ? Icons.add : Icons.remove, size: 18),
+      ),
+    );
+  }
+
+  Widget _buildPromoSection() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: _cardDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Promo Code', style: TextStyle(fontWeight: FontWeight.w600)),
+            const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: promoController,
+                  decoration: InputDecoration(
+                    hintText: 'Enter code',
+                    errorText: promoError,
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              ElevatedButton(
+                onPressed: _applyPromo,
+                child: const Text('Apply'),
+              )
+            ],
+          ),
+          if (appliedPromoCode != null)...[
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.green.shade600, size: 18),
+                const SizedBox(width: 6),
+                Text('Applied $appliedPromoCode (-\$${promoDiscount.toStringAsFixed(2)})'),
+                IconButton(
+                  icon: const Icon(Icons.close, size: 18),
+                  onPressed: () { setState(() { appliedPromoCode=null; promoDiscount=0;}); },
+                )
+              ],
+            )
+          ]
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSummaryCard() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: _cardDecoration(),
+      child: Column(
+        children: [
+          _summaryRow('Subtotal', subtotal),
+          if (promoDiscount>0) _summaryRow('Promo Discount', -promoDiscount, highlight: true),
+          _summaryRow('Delivery', deliveryFee),
+          _summaryRow('Service Fee', serviceFee),
+          const Divider(height: 24),
+          _summaryRow('Total', total, bold: true),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPaymentMethodCard() {
+    return InkWell(
+      onTap: _changePayment,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: _cardDecoration(),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(children: [const Icon(Icons.payment), const SizedBox(width: 8), Text(paymentMethod)]),
+            const Icon(Icons.keyboard_arrow_down),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPlaceOrderBar() {
+    return SafeArea(
+      top: false,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        decoration: BoxDecoration(color: Colors.white, boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6)]),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Total', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                  Text('\$${total.toStringAsFixed(2)}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+                ],
+              ),
+            ),
+            ElevatedButton.icon(
+              onPressed: placing ? null : _placeOrder,
+              icon: placing ? const SizedBox(width:16,height:16,child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.check),
+              label: Text(placing ? 'Placing...' : 'Place Order'),
+              style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14)),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  BoxDecoration _cardDecoration() => BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 4,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      );
+
+  Widget _summaryRow(String label, double value,{bool highlight=false,bool bold=false}) {
+    final color = highlight ? Colors.green : Colors.black;
+    final style = TextStyle(fontSize: 14, fontWeight: bold? FontWeight.w700: FontWeight.w500, color: color);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: style),
+          Text('${value<0?'-':''}\$${value.abs().toStringAsFixed(2)}', style: style),
         ],
       ),
     );
