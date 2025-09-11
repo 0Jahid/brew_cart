@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/models/order_item.dart';
 import '../../../../core/services/auth_service.dart';
+import '../state/coffee_shop_nav.dart';
 
 class OrdersTab extends StatefulWidget {
   const OrdersTab({super.key, required this.onBack});
@@ -54,7 +55,9 @@ class _OrdersTabState extends State<OrdersTab> {
       }
       final minOrder = (data['minOrder'] as num?)?.toDouble() ?? 0;
       if (subtotal < minOrder) {
-        setState(() => promoError = 'Min order \$${minOrder.toStringAsFixed(2)}');
+        setState(
+          () => promoError = 'Min order \$${minOrder.toStringAsFixed(2)}',
+        );
         return;
       }
       final type = data['type'];
@@ -80,19 +83,30 @@ class _OrdersTabState extends State<OrdersTab> {
     if (cart.cartItems.isEmpty) return;
     final user = AuthService.instance.currentUser;
     if (user == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please sign in')),);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please sign in')));
       return;
     }
+    // Capture financial snapshot BEFORE clearing cart so dialog shows real totals.
+    final snapSubtotal = subtotal;
+    final snapPromoDiscount = promoDiscount;
+    final snapDelivery = deliveryFee;
+    final snapService = serviceFee;
+    final snapTotal = total; // uses current getters
+    final now = DateTime.now();
+    final autoDeliverAt = now.add(const Duration(minutes: 25));
+
     setState(() => placing = true);
     try {
-      final orderRef = FirebaseFirestore.instance
+      final userOrders = FirebaseFirestore.instance
           .collection('users')
           .doc(user.uid)
-          .collection('orders')
-          .doc();
+          .collection('orders');
+      final orderRef = userOrders.doc();
       await orderRef.set({
         'createdAt': FieldValue.serverTimestamp(),
+        'autoDeliverAt': autoDeliverAt, // client computed target delivery time
         'status': 'pending',
         'items': [
           for (final i in cart.cartItems)
@@ -103,42 +117,64 @@ class _OrdersTabState extends State<OrdersTab> {
               'sugar': i.sugar,
               'ice': i.ice,
               'qty': i.quantity,
-              'unitPrice': double.tryParse(i.coffeePrice.replaceAll('\$', '')) ?? 0,
+              // Extract numeric unit price from string like "$4.50"
+              'unitPrice': () {
+                final m = RegExp(
+                  r'[0-9]+(?:\.[0-9]+)?',
+                ).firstMatch(i.coffeePrice);
+                return m != null ? double.tryParse(m.group(0)!) ?? 0 : 0;
+              }(),
               'total': i.totalPrice,
-            }
+            },
         ],
-        'subtotal': subtotal,
-        'deliveryFee': deliveryFee,
-        'serviceFee': serviceFee,
+        'subtotal': snapSubtotal,
+        'deliveryFee': snapDelivery,
+        'serviceFee': snapService,
         'promoCode': appliedPromoCode,
-        'promoDiscount': promoDiscount,
-        'total': total,
+        'promoDiscount': snapPromoDiscount,
+        'total': snapTotal,
         'paymentMethod': paymentMethod,
       });
+
       cart.clearCart();
       setState(() {
         appliedPromoCode = null;
         promoDiscount = 0;
       });
-      if (mounted) {
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: const Text('Order Placed'),
-            content: Text('Total: \$${total.toStringAsFixed(2)}'),
-            actions: [
-              TextButton(
-                onPressed: () { Navigator.pop(context); },
-                child: const Text('OK'),
-              )
+
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text('Order Placed'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Total: \$${snapTotal.toStringAsFixed(2)}'),
+              const SizedBox(height: 4),
+              Text('Estimated delivery in 25 min'),
             ],
           ),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to place order: $e')),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // close dialog
+                setCoffeeShopTab(2); // History tab index
+              },
+              child: const Text('Track Order'),
+            ),
+          ],
+        ),
       );
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to place order: $e')));
     } finally {
       if (mounted) setState(() => placing = false);
     }
@@ -151,12 +187,15 @@ class _OrdersTabState extends State<OrdersTab> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            for (final m in ['Cash','Card','Wallet'])
+            for (final m in ['Cash', 'Card', 'Wallet'])
               RadioListTile<String>(
                 title: Text(m),
                 value: m,
                 groupValue: paymentMethod,
-                onChanged: (v) { setState(() => paymentMethod = v!); Navigator.pop(context); },
+                onChanged: (v) {
+                  setState(() => paymentMethod = v!);
+                  Navigator.pop(context);
+                },
               ),
           ],
         ),
@@ -174,7 +213,10 @@ class _OrdersTabState extends State<OrdersTab> {
             _buildHeader(),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
                 child: Column(
                   children: [
                     _buildCartList(),
@@ -245,7 +287,10 @@ class _OrdersTabState extends State<OrdersTab> {
           return ListTile(
             title: Text(it.coffeeName),
             subtitle: Text('${it.size} • ${it.sugar} • ${it.ice}'),
-            leading: CircleAvatar(backgroundColor: Colors.brown.shade100, child: const Icon(Icons.coffee)),
+            leading: CircleAvatar(
+              backgroundColor: Colors.brown.shade100,
+              child: const Icon(Icons.coffee),
+            ),
             trailing: SizedBox(
               width: 130,
               child: Row(
@@ -293,8 +338,11 @@ class _OrdersTabState extends State<OrdersTab> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Promo Code', style: TextStyle(fontWeight: FontWeight.w600)),
-            const SizedBox(height: 8),
+          const Text(
+            'Promo Code',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 8),
           Row(
             children: [
               Expanded(
@@ -305,8 +353,14 @@ class _OrdersTabState extends State<OrdersTab> {
                     errorText: promoError,
                     filled: true,
                     fillColor: Colors.white,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
                   ),
                 ),
               ),
@@ -314,23 +368,34 @@ class _OrdersTabState extends State<OrdersTab> {
               ElevatedButton(
                 onPressed: _applyPromo,
                 child: const Text('Apply'),
-              )
+              ),
             ],
           ),
-          if (appliedPromoCode != null)...[
+          if (appliedPromoCode != null) ...[
             const SizedBox(height: 8),
             Row(
               children: [
-                Icon(Icons.check_circle, color: Colors.green.shade600, size: 18),
+                Icon(
+                  Icons.check_circle,
+                  color: Colors.green.shade600,
+                  size: 18,
+                ),
                 const SizedBox(width: 6),
-                Text('Applied $appliedPromoCode (-\$${promoDiscount.toStringAsFixed(2)})'),
+                Text(
+                  'Applied $appliedPromoCode (-\$${promoDiscount.toStringAsFixed(2)})',
+                ),
                 IconButton(
                   icon: const Icon(Icons.close, size: 18),
-                  onPressed: () { setState(() { appliedPromoCode=null; promoDiscount=0;}); },
-                )
+                  onPressed: () {
+                    setState(() {
+                      appliedPromoCode = null;
+                      promoDiscount = 0;
+                    });
+                  },
+                ),
               ],
-            )
-          ]
+            ),
+          ],
         ],
       ),
     );
@@ -343,7 +408,8 @@ class _OrdersTabState extends State<OrdersTab> {
       child: Column(
         children: [
           _summaryRow('Subtotal', subtotal),
-          if (promoDiscount>0) _summaryRow('Promo Discount', -promoDiscount, highlight: true),
+          if (promoDiscount > 0)
+            _summaryRow('Promo Discount', -promoDiscount, highlight: true),
           _summaryRow('Delivery', deliveryFee),
           _summaryRow('Service Fee', serviceFee),
           const Divider(height: 24),
@@ -362,7 +428,13 @@ class _OrdersTabState extends State<OrdersTab> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(children: [const Icon(Icons.payment), const SizedBox(width: 8), Text(paymentMethod)]),
+            Row(
+              children: [
+                const Icon(Icons.payment),
+                const SizedBox(width: 8),
+                Text(paymentMethod),
+              ],
+            ),
             const Icon(Icons.keyboard_arrow_down),
           ],
         ),
@@ -375,24 +447,49 @@ class _OrdersTabState extends State<OrdersTab> {
       top: false,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        decoration: BoxDecoration(color: Colors.white, boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6)]),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6),
+          ],
+        ),
         child: Row(
           children: [
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Total', style: TextStyle(fontSize: 12, color: Colors.grey)),
-                  Text('\$${total.toStringAsFixed(2)}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+                  const Text(
+                    'Total',
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                  Text(
+                    '\$${total.toStringAsFixed(2)}',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ],
               ),
             ),
             ElevatedButton.icon(
               onPressed: placing ? null : _placeOrder,
-              icon: placing ? const SizedBox(width:16,height:16,child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.check),
+              icon: placing
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.check),
               label: Text(placing ? 'Placing...' : 'Place Order'),
-              style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14)),
-            )
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 14,
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -400,27 +497,39 @@ class _OrdersTabState extends State<OrdersTab> {
   }
 
   BoxDecoration _cardDecoration() => BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 4,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      );
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(14),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.04),
+        blurRadius: 4,
+        offset: const Offset(0, 4),
+      ),
+    ],
+  );
 
-  Widget _summaryRow(String label, double value,{bool highlight=false,bool bold=false}) {
+  Widget _summaryRow(
+    String label,
+    double value, {
+    bool highlight = false,
+    bool bold = false,
+  }) {
     final color = highlight ? Colors.green : Colors.black;
-    final style = TextStyle(fontSize: 14, fontWeight: bold? FontWeight.w700: FontWeight.w500, color: color);
+    final style = TextStyle(
+      fontSize: 14,
+      fontWeight: bold ? FontWeight.w700 : FontWeight.w500,
+      color: color,
+    );
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label, style: style),
-          Text('${value<0?'-':''}\$${value.abs().toStringAsFixed(2)}', style: style),
+          Text(
+            '${value < 0 ? '-' : ''}\$${value.abs().toStringAsFixed(2)}',
+            style: style,
+          ),
         ],
       ),
     );

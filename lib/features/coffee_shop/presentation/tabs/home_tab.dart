@@ -14,7 +14,7 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
-  String? _selectedCategoryId;
+  String? _selectedCategoryId = 'ALL';
 
   @override
   Widget build(BuildContext context) {
@@ -31,15 +31,7 @@ class _HomeTabState extends State<HomeTab> {
             },
           ),
           const SizedBox(height: 24),
-          if (_selectedCategoryId == null)
-            const Center(
-              child: Padding(
-                padding: EdgeInsets.all(24),
-                child: CircularProgressIndicator(),
-              ),
-            )
-          else
-            _CategoryProductsGrid(categoryId: _selectedCategoryId!),
+          _CategoryProductsGrid(categoryId: _selectedCategoryId ?? 'ALL'),
           const SizedBox(height: 32),
           const _PopularSection(),
           const SizedBox(height: 100),
@@ -55,13 +47,21 @@ class _CategoryProductsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final query = FirebaseFirestore.instance
-        .collection('categories')
-        .doc(categoryId)
-        .collection('products')
-        .where('isAvailable', isEqualTo: true);
+    final isAll = categoryId == 'ALL';
+    final stream = isAll
+        ? FirebaseFirestore.instance
+              .collectionGroup('products')
+              // no where() to avoid collection group index; filter client-side
+              .limit(200)
+              .snapshots()
+        : FirebaseFirestore.instance
+              .collection('categories')
+              .doc(categoryId)
+              .collection('products')
+              .where('isAvailable', isEqualTo: true)
+              .snapshots();
     return StreamBuilder<QuerySnapshot>(
-      stream: query.snapshots(),
+      stream: stream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -72,11 +72,18 @@ class _CategoryProductsGrid extends StatelessWidget {
             child: Text('Failed to load products: ${snapshot.error}'),
           );
         }
-        final products =
-            snapshot.data?.docs
-                .map((d) => ProductModel.fromDoc(categoryId, d))
-                .toList() ??
-            [];
+        final docs = snapshot.data?.docs ?? [];
+        final filteredDocs = isAll
+            ? docs.where((d) {
+                final m = d.data() as Map<String, dynamic>? ?? {};
+                return (m['isAvailable'] as bool?) ?? true;
+              }).toList()
+            : docs;
+        final products = isAll
+            ? filteredDocs.map(ProductModel.fromGroupDoc).toList()
+            : filteredDocs
+                  .map((d) => ProductModel.fromDoc(categoryId, d))
+                  .toList();
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: products.isEmpty
@@ -107,7 +114,7 @@ class _CategoryProductsGrid extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (context) => CoffeeDetailsPage(
                               coffeeId: p.id,
-                              categoryId: categoryId,
+                              categoryId: p.categoryId,
                               coffeeName: p.name,
                               coffeePrice: '\$${price.toStringAsFixed(2)}',
                               coffeeSize: sizeLabel,
@@ -123,7 +130,7 @@ class _CategoryProductsGrid extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (context) => CustomOrdersPage(
                               coffeeId: p.id,
-                              categoryId: categoryId,
+                              categoryId: p.categoryId,
                               coffeeName: p.name,
                               coffeePrice: '\$${price.toStringAsFixed(2)}',
                               rating: p.ratingAverage,
@@ -146,8 +153,8 @@ class _PopularSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final stream = FirebaseFirestore.instance
         .collectionGroup('products')
-        .orderBy('rating.average', descending: true)
-        .limit(5)
+        // Avoid orderBy on collectionGroup to prevent index requirement; sort client-side
+        .limit(200)
         .snapshots();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -191,10 +198,19 @@ class _PopularSection extends StatelessWidget {
               if (docs.isEmpty) {
                 return const Text('No popular items yet');
               }
+              // map, filter available, sort by popularityIndex desc, and take top 5
+              final items =
+                  docs
+                      .map(ProductModel.fromGroupDoc)
+                      .where((p) => p.isAvailable)
+                      .toList()
+                    ..sort(
+                      (a, b) => b.popularityIndex.compareTo(a.popularityIndex),
+                    );
+              final top5 = items.take(5).toList();
+              if (top5.isEmpty) return const Text('No popular items yet');
               return Column(
-                children: docs.map((d) {
-                  final prod = ProductModel.fromGroupDoc(d);
-                  if (!prod.isAvailable) return const SizedBox.shrink();
+                children: top5.map((prod) {
                   final price = prod.firstPrice();
                   return PopularCoffeeItem(
                     name: prod.name,

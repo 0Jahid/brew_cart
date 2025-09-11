@@ -97,7 +97,6 @@ class _CoffeeDetailsPageState extends State<CoffeeDetailsPage> {
     final coffeeName = prod?.name ?? widget.coffeeName ?? 'Coffee';
     final rating = prod?.ratingAverage ?? widget.rating ?? 0.0;
     final reviews = prod?.ratingCount ?? widget.reviews ?? 0;
-    final firstSize = prod?.firstSizeLabel();
     final price = prod != null ? prod.firstPrice() : 0.0;
     final coffeePrice = prod != null
         ? '\$${price.toStringAsFixed(2)}'

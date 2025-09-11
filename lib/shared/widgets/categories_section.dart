@@ -62,13 +62,25 @@ class _CategoriesSectionState extends State<CategoriesSection> {
         final categories =
             docs.map(CategoryModel.fromDoc).where((c) => c.isActive).toList()
               ..sort((a, b) => a.position.compareTo(b.position));
-        if (categories.isEmpty) {
+        // Inject synthetic "All" category at the beginning
+        final items = [
+          CategoryModel(
+            id: 'ALL',
+            name: 'All',
+            description: '',
+            imageUrl: null,
+            position: -1,
+            isActive: true,
+          ),
+          ...categories,
+        ];
+        if (items.isEmpty) {
           return const Padding(
             padding: EdgeInsets.all(16),
             child: Text('No categories'),
           );
         }
-        final selected = categories[selectedIndex % categories.length];
+        final selected = items[selectedIndex % items.length];
         // Notify parent on first build
         WidgetsBinding.instance.addPostFrameCallback((_) {
           widget.onCategorySelected?.call(selected);
@@ -102,8 +114,8 @@ class _CategoriesSectionState extends State<CategoriesSection> {
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  children: List.generate(categories.length, (index) {
-                    final c = categories[index];
+                  children: List.generate(items.length, (index) {
+                    final c = items[index];
                     final isSel = selectedIndex == index;
                     return GestureDetector(
                       onTap: () {
@@ -112,7 +124,7 @@ class _CategoriesSectionState extends State<CategoriesSection> {
                       },
                       child: Container(
                         margin: EdgeInsets.only(
-                          right: index < categories.length - 1 ? 16 : 0,
+                          right: index < items.length - 1 ? 16 : 0,
                         ),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 20,

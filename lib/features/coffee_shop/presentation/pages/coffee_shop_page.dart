@@ -5,6 +5,7 @@ import '../tabs/home_tab.dart';
 import '../tabs/orders_tab.dart';
 import '../tabs/history_tab.dart';
 import '../tabs/profile_tab.dart';
+import '../state/coffee_shop_nav.dart';
 
 // Thin orchestrator page: delegates actual UI to individual tab widgets.
 class CoffeeShopPage extends StatefulWidget {
@@ -14,8 +15,29 @@ class CoffeeShopPage extends StatefulWidget {
 }
 
 class _CoffeeShopPageState extends State<CoffeeShopPage> {
-  int _selectedIndex = 0;
-  void _setIndex(int i) => setState(() => _selectedIndex = i);
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = coffeeShopTabIndex.value;
+    coffeeShopTabIndex.addListener(_onTabChanged);
+  }
+
+  void _onTabChanged() {
+    if (!mounted) return;
+    if (_selectedIndex != coffeeShopTabIndex.value) {
+      setState(() => _selectedIndex = coffeeShopTabIndex.value);
+    }
+  }
+
+  @override
+  void dispose() {
+    coffeeShopTabIndex.removeListener(_onTabChanged);
+    super.dispose();
+  }
+
+  void _setIndex(int i) => setCoffeeShopTab(i);
 
   Widget _body() => switch (_selectedIndex) {
     0 => const HomeTab(),

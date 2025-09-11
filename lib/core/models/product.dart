@@ -46,6 +46,7 @@ class ProductModel {
   final List<dynamic> tags;
   final double ratingAverage;
   final int ratingCount;
+  final int popularityIndex; // 'pi' field
 
   ProductModel({
     required this.id,
@@ -61,6 +62,7 @@ class ProductModel {
     required this.tags,
     required this.ratingAverage,
     required this.ratingCount,
+    required this.popularityIndex,
   });
 
   factory ProductModel.fromDoc(String categoryId, DocumentSnapshot doc) {
@@ -84,6 +86,7 @@ class ProductModel {
       tags: (d['tags'] as List<dynamic>? ?? const []),
       ratingAverage: (rating['average'] as num?)?.toDouble() ?? 0,
       ratingCount: (rating['count'] as num?)?.toInt() ?? 0,
+      popularityIndex: (d['pi'] as num?)?.toInt() ?? 0,
     );
   }
 

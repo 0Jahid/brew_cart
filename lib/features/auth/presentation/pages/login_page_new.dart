@@ -91,7 +91,8 @@ class _LoginPageState extends State<LoginPage> {
                             borderRadius: BorderRadius.circular(60),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.primary.withOpacity(0.3),
+                                // replaced deprecated withOpacity -> withValues
+                                color: AppColors.primary.withValues(alpha: 0.3),
                                 blurRadius: 20,
                                 offset: const Offset(0, 10),
                               ),
@@ -237,17 +238,21 @@ class _LoginPageState extends State<LoginPage> {
                             Align(
                               alignment: Alignment.centerRight,
                               child: TextButton(
+                                // Unified style to avoid TextStyle lerp inherit mismatch
+                                style: TextButton.styleFrom(
+                                  padding: EdgeInsets.zero,
+                                  foregroundColor: AppColors.primary,
+                                  textStyle: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    // inherit left default true via styleFrom
+                                    decoration: TextDecoration.none,
+                                  ),
+                                ),
                                 onPressed: () {
                                   // TODO: Implement forgot password
                                 },
-                                child: const Text(
-                                  'Forgot Password?',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.primary,
-                                  ),
-                                ),
+                                child: const Text('Forgot Password?'),
                               ),
                             ),
 
@@ -260,13 +265,15 @@ class _LoginPageState extends State<LoginPage> {
                                 gradient: LinearGradient(
                                   colors: [
                                     AppColors.primary,
-                                    AppColors.primary.withOpacity(0.8),
+                                    AppColors.primary.withValues(alpha: 0.8),
                                   ],
                                 ),
                                 borderRadius: BorderRadius.circular(16),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColors.primary.withOpacity(0.3),
+                                    color: AppColors.primary.withValues(
+                                      alpha: 0.3,
+                                    ),
                                     blurRadius: 12,
                                     offset: const Offset(0, 6),
                                   ),
@@ -354,18 +361,21 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                 ),
                                 TextButton(
-                                  onPressed: () {
-                                    context.go('/sign-up');
-                                  },
-                                  child: const Text(
-                                    'Sign Up',
-                                    style: TextStyle(
-                                      color: AppColors.primary,
+                                  style: TextButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 4,
+                                    ),
+                                    foregroundColor: AppColors.primary,
+                                    textStyle: const TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
                                       decoration: TextDecoration.underline,
                                     ),
                                   ),
+                                  onPressed: () {
+                                    context.go('/sign-up');
+                                  },
+                                  child: const Text('Sign Up'),
                                 ),
                               ],
                             ),

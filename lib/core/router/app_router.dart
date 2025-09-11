@@ -17,6 +17,8 @@ class AppRouter {
   static const String splash = '/';
   static const String login = '/login';
   static const String signUp = '/sign-up';
+  // Alias for legacy reference 'register' used in some pages
+  static const String register = signUp;
   static const String home = '/home';
   static const String coffeeDetails = '/coffee-details';
   static const String customization = '/customization';
