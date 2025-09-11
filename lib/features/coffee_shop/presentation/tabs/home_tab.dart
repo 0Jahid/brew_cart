@@ -216,6 +216,7 @@ class _PopularSection extends StatelessWidget {
                     name: prod.name,
                     size: prod.firstSizeLabel(),
                     price: price,
+                    imageUrl: prod.imageUrl,
                     onTap: () {
                       Navigator.push(
                         context,
