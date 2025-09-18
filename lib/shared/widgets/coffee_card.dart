@@ -110,7 +110,7 @@ class CoffeeCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          '\$${price.toStringAsFixed(2)}',
+                          '৳${price.toStringAsFixed(2)}',
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,

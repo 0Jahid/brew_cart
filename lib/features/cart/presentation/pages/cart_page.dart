@@ -96,7 +96,7 @@ class _CartPageState extends State<CartPage> {
 
                           // Price
                           const Text(
-                            '\$5.20',
+                            '৳5.20',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,

@@ -411,14 +411,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
           const SizedBox(height: 16),
 
           // Price breakdown
-          _buildSummaryRow('Price', '\$${subtotal.toStringAsFixed(2)}'),
+          _buildSummaryRow('Price', '৳${subtotal.toStringAsFixed(2)}'),
           const SizedBox(height: 8),
           _buildSummaryRow(
             'Shipping Cost',
-            '\$${shippingCost.toStringAsFixed(2)}',
+            '৳${shippingCost.toStringAsFixed(2)}',
           ),
           const SizedBox(height: 8),
-          _buildSummaryRow('Admin Fee', '\$${adminFee.toStringAsFixed(0)}'),
+          _buildSummaryRow('Admin Fee', '৳${adminFee.toStringAsFixed(0)}'),
 
           const SizedBox(height: 16),
 
@@ -436,7 +436,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 ),
               ),
               Text(
-                '\$${total.toStringAsFixed(2)}',
+                '৳${total.toStringAsFixed(2)}',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -578,7 +578,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
               const Text('Your order has been successfully placed.'),
               const SizedBox(height: 8),
               Text(
-                'Total: \$${total.toStringAsFixed(2)}',
+                'Total: ৳${total.toStringAsFixed(2)}',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: AppColors.primary,

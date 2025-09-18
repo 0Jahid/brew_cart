@@ -91,7 +91,7 @@ class HistoryTab extends StatelessWidget {
                         return _OrderCard(
                           items: itemsLabel,
                           date: createdStr,
-                          price: '\$${total.toStringAsFixed(2)}',
+                          price: '৳${total.toStringAsFixed(2)}',
                           status: status,
                           etaMinutes:
                               status == 'pending' &&

@@ -67,13 +67,19 @@ class ProductModel {
 
   factory ProductModel.fromDoc(String categoryId, DocumentSnapshot doc) {
     final d = doc.data() as Map<String, dynamic>? ?? {};
+    final images = (d['images'] as Map?)?.cast<String, dynamic>();
+    final thumb = images != null ? images['thumbnail'] as String? : null;
+    final gallery = images != null ? images['gallery'] as List? : null;
+    final firstGallery = (gallery != null && gallery.isNotEmpty)
+        ? gallery.first as String?
+        : null;
     final rating = d['rating'] as Map<String, dynamic>? ?? {};
     return ProductModel(
       id: doc.id,
       categoryId: categoryId,
       name: d['name'] ?? '',
       description: d['description'] ?? '',
-      imageUrl: d['imageUrl'] as String?,
+      imageUrl: (d['imageUrl'] as String?) ?? thumb ?? firstGallery,
       basePrice: (d['basePrice'] as num?)?.toDouble() ?? 0,
       sizes: Map<String, dynamic>.from(
         d['sizes'] as Map<String, dynamic>? ?? {},

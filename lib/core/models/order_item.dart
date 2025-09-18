@@ -21,13 +21,13 @@ class OrderItem {
 
   double get totalPrice {
     // Parse price and calculate total based on quantity
-    String priceStr = coffeePrice.replaceAll('\$', '');
-    double price = double.tryParse(priceStr) ?? 5.20;
+  final match = RegExp(r'[0-9]+(?:\.[0-9]+)?').firstMatch(coffeePrice);
+  double price = match != null ? double.tryParse(match.group(0)!) ?? 5.20 : 5.20;
     return price * quantity;
   }
 
   String get formattedTotalPrice {
-    return '\$${totalPrice.toStringAsFixed(2)}';
+  return '৳${totalPrice.toStringAsFixed(2)}';
   }
 
   OrderItem copyWith({
@@ -72,7 +72,7 @@ class CartManager {
   double get totalPrice =>
       _cartItems.fold(0.0, (sum, item) => sum + item.totalPrice);
 
-  String get formattedTotalPrice => '\$${totalPrice.toStringAsFixed(2)}';
+  String get formattedTotalPrice => '৳${totalPrice.toStringAsFixed(2)}';
 
   void addItem(OrderItem item) {
     // Check if same coffee with same customizations already exists

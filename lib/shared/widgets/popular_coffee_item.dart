@@ -5,6 +5,7 @@ class PopularCoffeeItem extends StatefulWidget {
   final String name;
   final String size;
   final double price;
+  final String? imageUrl;
   final VoidCallback? onAddPressed;
   final VoidCallback? onRemovePressed;
   final VoidCallback? onTap;
@@ -14,6 +15,7 @@ class PopularCoffeeItem extends StatefulWidget {
     required this.name,
     required this.size,
     required this.price,
+    this.imageUrl,
     this.onAddPressed,
     this.onRemovePressed,
     this.onTap,
@@ -47,14 +49,37 @@ class _PopularCoffeeItemState extends State<PopularCoffeeItem> {
         child: Row(
           children: [
             // Coffee Image Placeholder
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(12),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: SizedBox(
+                width: 60,
+                height: 60,
+                child: (widget.imageUrl != null && widget.imageUrl!.isNotEmpty)
+                    ? Image.network(
+                        widget.imageUrl!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.coffee, color: Colors.grey, size: 30),
+                        ),
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Container(
+                            color: Colors.grey[200],
+                            alignment: Alignment.center,
+                            child: const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          );
+                        },
+                      )
+                    : Container(
+                        color: Colors.grey[300],
+                        child: const Icon(Icons.coffee, color: Colors.grey, size: 30),
+                      ),
               ),
-              child: const Icon(Icons.coffee, color: Colors.grey, size: 30),
             ),
 
             const SizedBox(width: 16),
@@ -79,7 +104,7 @@ class _PopularCoffeeItemState extends State<PopularCoffeeItem> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '\$${widget.price.toStringAsFixed(2)}',
+                    '৳${widget.price.toStringAsFixed(2)}',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,

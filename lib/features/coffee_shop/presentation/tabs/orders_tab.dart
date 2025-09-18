@@ -56,7 +56,7 @@ class _OrdersTabState extends State<OrdersTab> {
       final minOrder = (data['minOrder'] as num?)?.toDouble() ?? 0;
       if (subtotal < minOrder) {
         setState(
-          () => promoError = 'Min order \$${minOrder.toStringAsFixed(2)}',
+          () => promoError = 'Min order ৳${minOrder.toStringAsFixed(2)}',
         );
         return;
       }
@@ -136,6 +136,33 @@ class _OrdersTabState extends State<OrdersTab> {
         'paymentMethod': paymentMethod,
       });
 
+      // Rewards: 1 point per whole currency unit spent (based on total).
+      // Also increment user's ordersCount and update lastOrderAt.
+      final pointsInc = snapTotal.floor();
+      final userDoc = FirebaseFirestore.instance.collection('users').doc(user.uid);
+      await FirebaseFirestore.instance.runTransaction((tx) async {
+        final snap = await tx.get(userDoc);
+        final data = (snap.data() as Map<String, dynamic>?) ?? {};
+        final prevPoints = (data['points'] as num?)?.toInt() ?? 0;
+        final prevRewards = (data['rewardsCount'] as num?)?.toInt() ?? 0;
+        final newPoints = prevPoints + pointsInc;
+        // Earn 1 reward for every 100 points accumulated (cumulative).
+        final earnedBefore = prevPoints ~/ 100;
+        final earnedAfter = newPoints ~/ 100;
+        final newlyEarned = (earnedAfter - earnedBefore);
+        final newRewards = prevRewards + (newlyEarned > 0 ? newlyEarned : 0);
+        tx.set(
+          userDoc,
+          {
+            'points': newPoints,
+            'rewardsCount': newRewards,
+            'ordersCount': FieldValue.increment(1),
+            'lastOrderAt': FieldValue.serverTimestamp(),
+          },
+          SetOptions(merge: true),
+        );
+      });
+
       cart.clearCart();
       setState(() {
         appliedPromoCode = null;
@@ -151,7 +178,7 @@ class _OrdersTabState extends State<OrdersTab> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Total: \$${snapTotal.toStringAsFixed(2)}'),
+              Text('Total: ৳${snapTotal.toStringAsFixed(2)}'),
               const SizedBox(height: 4),
               Text('Estimated delivery in 25 min'),
             ],

@@ -79,7 +79,7 @@ class _PopularCoffeeItemState extends State<PopularCoffeeItem> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '\$${widget.price.toStringAsFixed(2)}',
+                    '৳${widget.price.toStringAsFixed(2)}',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,

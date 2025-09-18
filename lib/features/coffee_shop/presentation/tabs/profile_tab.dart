@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/services/auth_service.dart';
+import '../../../profile/presentation/pages/edit_profile_page.dart';
+import '../state/coffee_shop_nav.dart';
 
 class ProfileTab extends StatelessWidget {
   const ProfileTab({super.key, required this.onBack});
@@ -43,7 +45,12 @@ class ProfileTab extends StatelessWidget {
                   Icons.person_outline,
                   'Edit Profile',
                   'Update your personal information',
-                  () => _dialog(context, 'Edit Profile'),
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const EditProfilePage(),
+                    ),
+                  ),
                 ),
                 _menuTile(
                   Icons.location_on_outlined,
@@ -61,7 +68,7 @@ class ProfileTab extends StatelessWidget {
                   Icons.history,
                   'Order History',
                   'View your past orders',
-                  () => _dialog(context, 'Order History'),
+                  () => setCoffeeShopTab(2),
                 ),
               ],
             ),
@@ -246,12 +253,11 @@ class _ProfileHeader extends StatelessWidget {
         if (snap.hasError) {
           return _shell(child: Text('Error: ${snap.error}'));
         }
-        final data = snap.data?.data() ?? {};
-        final name = (data['name'] as String?)?.trim().isNotEmpty == true
+  final data = snap.data?.data() ?? {};
+  final name = (data['name'] as String?)?.trim().isNotEmpty == true
             ? (data['name'] as String)
             : (user!.displayName ?? user!.email ?? 'User');
         final email = user!.email ?? (data['email'] as String? ?? '');
-        final orders = (data['ordersCount'] ?? 0).toString();
         final points = (data['points'] ?? 0).toString();
         final rewards = (data['rewardsCount'] ?? 0).toString();
         return _shell(
@@ -297,15 +303,25 @@ class _ProfileHeader extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _StatItem(label: 'Orders', value: orders),
-                  const _Divider(),
-                  _StatItem(label: 'Points', value: points),
-                  const _Divider(),
-                  _StatItem(label: 'Rewards', value: rewards),
-                ],
+              StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                stream: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(user!.uid)
+                    .collection('orders')
+                    .snapshots(),
+                builder: (context, osnap) {
+                  final orderCount = osnap.data?.docs.length ?? 0;
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _StatItem(label: 'Orders', value: orderCount.toString()),
+                      const _Divider(),
+                      _StatItem(label: 'Points', value: points),
+                      const _Divider(),
+                      _StatItem(label: 'Rewards', value: rewards),
+                    ],
+                  );
+                },
               ),
             ],
           ),
