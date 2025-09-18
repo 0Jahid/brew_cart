@@ -139,7 +139,9 @@ class _OrdersTabState extends State<OrdersTab> {
       // Rewards: 1 point per whole currency unit spent (based on total).
       // Also increment user's ordersCount and update lastOrderAt.
       final pointsInc = snapTotal.floor();
-      final userDoc = FirebaseFirestore.instance.collection('users').doc(user.uid);
+      final userDoc = FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid);
       await FirebaseFirestore.instance.runTransaction((tx) async {
         final snap = await tx.get(userDoc);
         final data = (snap.data() as Map<String, dynamic>?) ?? {};
@@ -151,16 +153,12 @@ class _OrdersTabState extends State<OrdersTab> {
         final earnedAfter = newPoints ~/ 100;
         final newlyEarned = (earnedAfter - earnedBefore);
         final newRewards = prevRewards + (newlyEarned > 0 ? newlyEarned : 0);
-        tx.set(
-          userDoc,
-          {
-            'points': newPoints,
-            'rewardsCount': newRewards,
-            'ordersCount': FieldValue.increment(1),
-            'lastOrderAt': FieldValue.serverTimestamp(),
-          },
-          SetOptions(merge: true),
-        );
+        tx.set(userDoc, {
+          'points': newPoints,
+          'rewardsCount': newRewards,
+          'ordersCount': FieldValue.increment(1),
+          'lastOrderAt': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
       });
 
       cart.clearCart();

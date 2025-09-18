@@ -47,9 +47,7 @@ class ProfileTab extends StatelessWidget {
                   'Update your personal information',
                   () => Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (_) => const EditProfilePage(),
-                    ),
+                    MaterialPageRoute(builder: (_) => const EditProfilePage()),
                   ),
                 ),
                 _menuTile(
@@ -253,8 +251,8 @@ class _ProfileHeader extends StatelessWidget {
         if (snap.hasError) {
           return _shell(child: Text('Error: ${snap.error}'));
         }
-  final data = snap.data?.data() ?? {};
-  final name = (data['name'] as String?)?.trim().isNotEmpty == true
+        final data = snap.data?.data() ?? {};
+        final name = (data['name'] as String?)?.trim().isNotEmpty == true
             ? (data['name'] as String)
             : (user!.displayName ?? user!.email ?? 'User');
         final email = user!.email ?? (data['email'] as String? ?? '');

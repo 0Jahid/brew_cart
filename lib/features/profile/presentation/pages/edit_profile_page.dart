@@ -31,7 +31,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
         setState(() => _loading = false);
         return;
       }
-      final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .get();
       final data = doc.data() ?? {};
       _nameCtrl.text = (data['name'] as String?)?.trim().isNotEmpty == true
           ? data['name'] as String
@@ -56,15 +59,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profile updated')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Profile updated')));
       Navigator.pop(context);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to update: $e')));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -81,10 +84,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     final email = _user?.email ?? '';
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Edit Profile'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Edit Profile'), centerTitle: true),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
@@ -141,14 +141,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 height: 18,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation(Colors.white),
+                                  valueColor: AlwaysStoppedAnimation(
+                                    Colors.white,
+                                  ),
                                 ),
                               )
                             : const Text(
                                 'Save Changes',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                ),
+                                style: TextStyle(fontWeight: FontWeight.w600),
                               ),
                       ),
                     ),

@@ -3,7 +3,7 @@ import 'dart:math' as math;
 
 class AppHelpers {
   static String formatCurrency(double amount) {
-  final formatter = NumberFormat.currency(symbol: '৳', decimalDigits: 2);
+    final formatter = NumberFormat.currency(symbol: '৳', decimalDigits: 2);
     return formatter.format(amount);
   }
 

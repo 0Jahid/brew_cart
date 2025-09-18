@@ -99,8 +99,8 @@ class _CoffeeDetailsPageState extends State<CoffeeDetailsPage> {
     final reviews = prod?.ratingCount ?? widget.reviews ?? 0;
     final price = prod != null ? prod.firstPrice() : 0.0;
     final coffeePrice = prod != null
-  ? '৳${price.toStringAsFixed(2)}'
-  : (widget.coffeePrice ?? '৳0.00');
+        ? '৳${price.toStringAsFixed(2)}'
+        : (widget.coffeePrice ?? '৳0.00');
 
     return Scaffold(
       extendBodyBehindAppBar: true,

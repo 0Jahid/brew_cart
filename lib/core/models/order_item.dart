@@ -21,13 +21,15 @@ class OrderItem {
 
   double get totalPrice {
     // Parse price and calculate total based on quantity
-  final match = RegExp(r'[0-9]+(?:\.[0-9]+)?').firstMatch(coffeePrice);
-  double price = match != null ? double.tryParse(match.group(0)!) ?? 5.20 : 5.20;
+    final match = RegExp(r'[0-9]+(?:\.[0-9]+)?').firstMatch(coffeePrice);
+    double price = match != null
+        ? double.tryParse(match.group(0)!) ?? 5.20
+        : 5.20;
     return price * quantity;
   }
 
   String get formattedTotalPrice {
-  return '৳${totalPrice.toStringAsFixed(2)}';
+    return '৳${totalPrice.toStringAsFixed(2)}';
   }
 
   OrderItem copyWith({

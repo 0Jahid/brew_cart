@@ -60,7 +60,11 @@ class _PopularCoffeeItemState extends State<PopularCoffeeItem> {
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) => Container(
                           color: Colors.grey[300],
-                          child: const Icon(Icons.coffee, color: Colors.grey, size: 30),
+                          child: const Icon(
+                            Icons.coffee,
+                            color: Colors.grey,
+                            size: 30,
+                          ),
                         ),
                         loadingBuilder: (context, child, loadingProgress) {
                           if (loadingProgress == null) return child;
@@ -77,7 +81,11 @@ class _PopularCoffeeItemState extends State<PopularCoffeeItem> {
                       )
                     : Container(
                         color: Colors.grey[300],
-                        child: const Icon(Icons.coffee, color: Colors.grey, size: 30),
+                        child: const Icon(
+                          Icons.coffee,
+                          color: Colors.grey,
+                          size: 30,
+                        ),
                       ),
               ),
             ),

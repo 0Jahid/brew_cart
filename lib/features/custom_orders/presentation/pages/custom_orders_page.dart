@@ -121,7 +121,7 @@ class _CustomOrdersPageState extends State<CustomOrdersPage> {
   Widget build(BuildContext context) {
     final coffeeName = widget.coffeeName ?? _product?.name ?? 'Coffee';
     final unitPrice = _priceForSelectedSize();
-  final displayPrice = '৳' + unitPrice.toStringAsFixed(2);
+    final displayPrice = '৳' + unitPrice.toStringAsFixed(2);
     if (_loading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -653,7 +653,7 @@ class _CustomOrdersPageState extends State<CustomOrdersPage> {
     final item = OrderItem(
       coffeeId: widget.coffeeId,
       coffeeName: widget.coffeeName ?? _product?.name ?? 'Coffee',
-  coffeePrice: '৳' + price.toStringAsFixed(2),
+      coffeePrice: '৳' + price.toStringAsFixed(2),
       size: selectedSize ?? 'Regular',
       sugar: selectedSugar ?? 'Normal Sugar',
       ice: selectedIce,
