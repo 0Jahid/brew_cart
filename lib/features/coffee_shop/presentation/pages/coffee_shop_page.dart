@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/widgets/custom_app_bar.dart';
 import '../../../../shared/widgets/custom_bottom_nav_bar.dart';
+import '../../../../shared/widgets/division_selection_dialog.dart';
 import '../tabs/home_tab.dart';
 import '../tabs/orders_tab.dart';
 import '../tabs/history_tab.dart';
@@ -16,6 +17,7 @@ class CoffeeShopPage extends StatefulWidget {
 
 class _CoffeeShopPageState extends State<CoffeeShopPage> {
   late int _selectedIndex;
+  Map<String, dynamic>? _selectedDivision;
 
   @override
   void initState() {
@@ -39,6 +41,20 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
 
   void _setIndex(int i) => setCoffeeShopTab(i);
 
+  void _showDivisionSelection() {
+    showDialog(
+      context: context,
+      builder: (context) => DivisionSelectionDialog(
+        selectedDivision: _selectedDivision,
+        onDivisionSelected: (division) {
+          setState(() {
+            _selectedDivision = division;
+          });
+        },
+      ),
+    );
+  }
+
   Widget _body() => switch (_selectedIndex) {
     0 => const HomeTab(),
     1 => OrdersTab(onBack: () => _setIndex(0)),
@@ -54,9 +70,11 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
       appBar: _selectedIndex == 0
           ? CustomAppBar(
               userName: 'Jahid',
-              location: 'Dhaka, Bangladesh',
+              location: _selectedDivision != null
+                  ? '${_selectedDivision!['name']}, Bangladesh'
+                  : 'Dhaka, Bangladesh',
               onNotificationPressed: () {},
-              onLocationPressed: () {},
+              onLocationPressed: _showDivisionSelection,
             )
           : null,
       body: _body(),
