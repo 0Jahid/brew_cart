@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:async';
 import '../../../../shared/widgets/categories_section.dart';
 import '../../../../shared/widgets/coffee_card.dart';
 import '../../../coffee_details/presentation/pages/coffee_details_page.dart';
@@ -15,6 +16,42 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> {
   String? _selectedCategoryId = 'ALL';
+  late PageController _bannerPageController;
+  Timer? _bannerTimer;
+  int _currentBannerIndex = 0;
+  final int _bannerCount = 3; // Number of banner images
+
+  @override
+  void initState() {
+    super.initState();
+    _bannerPageController = PageController(initialPage: 0);
+    _startBannerTimer();
+  }
+
+  @override
+  void dispose() {
+    _bannerTimer?.cancel();
+    _bannerPageController.dispose();
+    super.dispose();
+  }
+
+  void _startBannerTimer() {
+    _bannerTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (_currentBannerIndex < _bannerCount - 1) {
+        _currentBannerIndex++;
+      } else {
+        _currentBannerIndex = 0;
+      }
+      
+      if (_bannerPageController.hasClients) {
+        _bannerPageController.animateToPage(
+          _currentBannerIndex,
+          duration: const Duration(milliseconds: 350),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +68,7 @@ class _HomeTabState extends State<HomeTab> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: PageView(
+                  controller: _bannerPageController,
                   children: [
                     Image.network(
                       'https://t4.ftcdn.net/jpg/02/55/91/67/360_F_255916794_PLWsW5bGfDkhviQ0YPrEJewDjLPdFjdV.jpg',
