@@ -36,51 +36,72 @@ class _HomeTabState extends State<HomeTab> {
                       'https://t4.ftcdn.net/jpg/02/55/91/67/360_F_255916794_PLWsW5bGfDkhviQ0YPrEJewDjLPdFjdV.jpg',
                       fit: BoxFit.cover,
                       width: double.infinity,
-                      loadingBuilder: (context, child, progress) => progress == null
+                      loadingBuilder: (context, child, progress) =>
+                          progress == null
                           ? child
                           : Container(
                               color: Colors.brown[50],
                               alignment: Alignment.center,
-                              child: const CircularProgressIndicator(strokeWidth: 2),
+                              child: const CircularProgressIndicator(
+                                strokeWidth: 2,
+                              ),
                             ),
                       errorBuilder: (context, error, stackTrace) => Container(
                         color: Colors.brown[100],
                         alignment: Alignment.center,
-                        child: const Icon(Icons.broken_image, size: 40, color: Colors.brown),
+                        child: const Icon(
+                          Icons.broken_image,
+                          size: 40,
+                          color: Colors.brown,
+                        ),
                       ),
                     ),
                     Image.network(
                       'https://www.shutterstock.com/image-vector/banner-coffee-shop-house-cafebar-260nw-1947776218.jpg',
                       fit: BoxFit.cover,
                       width: double.infinity,
-                      loadingBuilder: (context, child, progress) => progress == null
+                      loadingBuilder: (context, child, progress) =>
+                          progress == null
                           ? child
                           : Container(
                               color: Colors.brown[50],
                               alignment: Alignment.center,
-                              child: const CircularProgressIndicator(strokeWidth: 2),
+                              child: const CircularProgressIndicator(
+                                strokeWidth: 2,
+                              ),
                             ),
                       errorBuilder: (context, error, stackTrace) => Container(
                         color: Colors.brown[100],
                         alignment: Alignment.center,
-                        child: const Icon(Icons.broken_image, size: 40, color: Colors.brown),
+                        child: const Icon(
+                          Icons.broken_image,
+                          size: 40,
+                          color: Colors.brown,
+                        ),
                       ),
                     ),
                     Image.network(
                       'https://t4.ftcdn.net/jpg/03/26/12/23/360_F_326122335_RKvTXMb4RYkIzk94ZoPjkZQe2CUOVnen.jpg',
                       fit: BoxFit.cover,
                       width: double.infinity,
-                      loadingBuilder: (context, child, progress) => progress == null
+                      loadingBuilder: (context, child, progress) =>
+                          progress == null
                           ? child
                           : Container(
                               color: Colors.brown[50],
                               alignment: Alignment.center,
-                              child: const CircularProgressIndicator(strokeWidth: 2),
+                              child: const CircularProgressIndicator(
+                                strokeWidth: 2,
+                              ),
                             ),
                       errorBuilder: (context, error, stackTrace) => Container(
                         color: Colors.brown[100],
                         alignment: Alignment.center,
-                        child: const Icon(Icons.broken_image, size: 40, color: Colors.brown),
+                        child: const Icon(
+                          Icons.broken_image,
+                          size: 40,
+                          color: Colors.brown,
+                        ),
                       ),
                     ),
                   ],
