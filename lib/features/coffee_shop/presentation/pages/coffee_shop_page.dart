@@ -82,7 +82,6 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
         currentIndex: _selectedIndex,
         onTap: _setIndex,
       ),
-      extendBody: true,
     );
   }
 }

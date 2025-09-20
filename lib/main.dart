@@ -6,10 +6,12 @@ import 'shared/theme/app_theme.dart';
 import 'core/constants/app_strings.dart';
 import 'firebase_options.dart';
 import 'core/services/auth_service.dart';
+import 'core/services/stripe_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await StripeService.init();
   runApp(const MyApp());
 }
 

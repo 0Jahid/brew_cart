@@ -9,7 +9,6 @@ import '../../features/auth/presentation/pages/sign_up_page.dart';
 import '../../features/coffee_shop/presentation/pages/coffee_shop_page.dart';
 import '../../features/coffee_details/presentation/pages/coffee_details_page.dart';
 import '../../features/customization/presentation/pages/customization_page.dart';
-import '../../features/checkout/presentation/pages/checkout_page.dart';
 import '../../features/order_tracking/presentation/pages/order_tracking_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 
@@ -22,7 +21,6 @@ class AppRouter {
   static const String home = '/home';
   static const String coffeeDetails = '/coffee-details';
   static const String customization = '/customization';
-  static const String checkout = '/checkout';
   static const String orderTracking = '/order-tracking';
   static const String profile = '/profile';
 
@@ -61,10 +59,6 @@ class AppRouter {
           final coffeeId = state.uri.queryParameters['id']!;
           return CustomizationPage(coffeeId: coffeeId);
         },
-      ),
-      GoRoute(
-        path: checkout,
-        builder: (context, state) => const CheckoutPage(),
       ),
       GoRoute(
         path: orderTracking,

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/models/order_item.dart';
+import '../../../../core/models/payment_method.dart';
 import '../../../../core/services/auth_service.dart';
+import '../../../checkout/presentation/widgets/card_details_dialog.dart';
+import '../../../checkout/presentation/widgets/payment_result_dialog.dart';
 import '../state/coffee_shop_nav.dart';
 
 class OrdersTab extends StatefulWidget {
@@ -17,7 +20,7 @@ class _OrdersTabState extends State<OrdersTab> {
   String? appliedPromoCode;
   String? promoError;
   double promoDiscount = 0.0; // monetary amount
-  String paymentMethod = 'Cash';
+  PaymentMethod? selectedPaymentMethod;
   bool placing = false;
 
   @override
@@ -88,6 +91,53 @@ class _OrdersTabState extends State<OrdersTab> {
       ).showSnackBar(const SnackBar(content: Text('Please sign in')));
       return;
     }
+
+    // Check if payment method is selected
+    if (selectedPaymentMethod == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select a payment method')),
+      );
+      return;
+    }
+
+    // For card payments, show card details dialog
+    if (selectedPaymentMethod!.type == 'card') {
+      bool paymentSuccess = false;
+      Map<String, String>? cardDetails;
+      String? paymentError;
+
+      await showDialog(
+        context: context,
+        builder: (context) => CardDetailsDialog(
+          amount: total,
+          onComplete: (success, details, error) {
+            paymentSuccess = success;
+            cardDetails = details;
+            paymentError = error;
+            Navigator.of(context).pop();
+          },
+        ),
+      );
+
+      // Show payment result
+      if (!mounted) return;
+      await showDialog(
+        context: context,
+        builder: (context) => PaymentResultDialog(
+          isSuccess: paymentSuccess,
+          amount: total,
+          cardDetails: cardDetails,
+          errorMessage: paymentError,
+          onDismiss: () => Navigator.of(context).pop(),
+        ),
+      );
+
+      // If payment failed, return without placing order
+      if (!paymentSuccess) {
+        return;
+      }
+    }
+
     // Capture financial snapshot BEFORE clearing cart so dialog shows real totals.
     final snapSubtotal = subtotal;
     final snapPromoDiscount = promoDiscount;
@@ -106,7 +156,7 @@ class _OrdersTabState extends State<OrdersTab> {
       final orderRef = userOrders.doc();
       await orderRef.set({
         'createdAt': FieldValue.serverTimestamp(),
-        'autoDeliverAt': autoDeliverAt, // client computed target delivery time
+        'autoDeliverAt': autoDeliverAt,
         'status': 'pending',
         'items': [
           for (final i in cart.cartItems)
@@ -117,7 +167,6 @@ class _OrdersTabState extends State<OrdersTab> {
               'sugar': i.sugar,
               'ice': i.ice,
               'qty': i.quantity,
-              // Extract numeric unit price from string like "$4.50"
               'unitPrice': () {
                 final m = RegExp(
                   r'[0-9]+(?:\.[0-9]+)?',
@@ -133,7 +182,8 @@ class _OrdersTabState extends State<OrdersTab> {
         'promoCode': appliedPromoCode,
         'promoDiscount': snapPromoDiscount,
         'total': snapTotal,
-        'paymentMethod': paymentMethod,
+        'paymentMethod': selectedPaymentMethod!.name,
+        'paymentType': selectedPaymentMethod!.type,
       });
 
       // Rewards: 1 point per whole currency unit spent (based on total).
@@ -216,9 +266,16 @@ class _OrdersTabState extends State<OrdersTab> {
               RadioListTile<String>(
                 title: Text(m),
                 value: m,
-                groupValue: paymentMethod,
+                groupValue: selectedPaymentMethod?.name ?? 'Cash',
                 onChanged: (v) {
-                  setState(() => paymentMethod = v!);
+                  setState(() {
+                    // Find the payment method that matches the selected name
+                    final methods = PaymentMethod.getAvailablePaymentMethods();
+                    selectedPaymentMethod = methods.firstWhere(
+                      (method) => method.name.contains(v!) || v.toLowerCase() == method.type,
+                      orElse: () => methods.first,
+                    );
+                  });
                   Navigator.pop(context);
                 },
               ),
@@ -457,7 +514,7 @@ class _OrdersTabState extends State<OrdersTab> {
               children: [
                 const Icon(Icons.payment),
                 const SizedBox(width: 8),
-                Text(paymentMethod),
+                Text(selectedPaymentMethod?.name ?? 'Select Payment Method'),
               ],
             ),
             const Icon(Icons.keyboard_arrow_down),

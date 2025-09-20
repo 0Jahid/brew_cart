@@ -54,6 +54,34 @@ class OrderItem {
     );
   }
 
+  // Add fromMap factory method
+  factory OrderItem.fromMap(Map<String, dynamic> map) {
+    return OrderItem(
+      coffeeId: map['coffeeId'] as String,
+      coffeeName: map['coffeeName'] as String,
+      coffeePrice: map['coffeePrice'] as String,
+      size: map['size'] as String,
+      sugar: map['sugar'] as String,
+      ice: map['ice'] as String,
+      quantity: map['quantity'] as int,
+      rating: map['rating'] as double?,
+    );
+  }
+
+  // Add toMap method
+  Map<String, dynamic> toMap() {
+    return {
+      'coffeeId': coffeeId,
+      'coffeeName': coffeeName,
+      'coffeePrice': coffeePrice,
+      'size': size,
+      'sugar': sugar,
+      'ice': ice,
+      'quantity': quantity,
+      'rating': rating,
+    };
+  }
+
   @override
   String toString() {
     return '$coffeeName ($size, $sugar, $ice) x$quantity - $formattedTotalPrice';
