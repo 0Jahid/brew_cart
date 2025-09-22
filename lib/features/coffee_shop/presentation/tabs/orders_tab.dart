@@ -272,7 +272,9 @@ class _OrdersTabState extends State<OrdersTab> {
                     // Find the payment method that matches the selected name
                     final methods = PaymentMethod.getAvailablePaymentMethods();
                     selectedPaymentMethod = methods.firstWhere(
-                      (method) => method.name.contains(v!) || v.toLowerCase() == method.type,
+                      (method) =>
+                          method.name.contains(v!) ||
+                          v.toLowerCase() == method.type,
                       orElse: () => methods.first,
                     );
                   });
@@ -385,7 +387,7 @@ class _OrdersTabState extends State<OrdersTab> {
                   ),
                   _qtyBtn(index, 1),
                   const SizedBox(width: 8),
-                  Text('\$${it.totalPrice.toStringAsFixed(2)}'),
+                  Text('৳${it.totalPrice.toStringAsFixed(2)}'),
                 ],
               ),
             ),
@@ -464,7 +466,7 @@ class _OrdersTabState extends State<OrdersTab> {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  'Applied $appliedPromoCode (-\$${promoDiscount.toStringAsFixed(2)})',
+                  'Applied $appliedPromoCode (-৳${promoDiscount.toStringAsFixed(2)})',
                 ),
                 IconButton(
                   icon: const Icon(Icons.close, size: 18),
@@ -546,7 +548,7 @@ class _OrdersTabState extends State<OrdersTab> {
                     style: TextStyle(fontSize: 12, color: Colors.grey),
                   ),
                   Text(
-                    '\$${total.toStringAsFixed(2)}',
+                    '৳${total.toStringAsFixed(2)}',
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
@@ -609,7 +611,7 @@ class _OrdersTabState extends State<OrdersTab> {
         children: [
           Text(label, style: style),
           Text(
-            '${value < 0 ? '-' : ''}\$${value.abs().toStringAsFixed(2)}',
+            '${value < 0 ? '-' : ''}৳${value.abs().toStringAsFixed(2)}',
             style: style,
           ),
         ],

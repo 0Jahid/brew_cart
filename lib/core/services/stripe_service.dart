@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 
 class StripeService {
-  static const String _publishableKey = 'pk_test_51S98W9FDsIpVdvUpyNmQcqfHaJgMNsEOzAE9F0VINxIU0LpLnLIhDTlHlxwlAQ3y7b3VwajkLLF8sTrD3LGqwc3l00jJ4O7Q7J';
-  
+  static const String _publishableKey =
+      'pk_test_51S98W9FDsIpVdvUpyNmQcqfHaJgMNsEOzAE9F0VINxIU0LpLnLIhDTlHlxwlAQ3y7b3VwajkLLF8sTrD3LGqwc3l00jJ4O7Q7J';
+
   static Future<void> init() async {
     Stripe.publishableKey = _publishableKey;
     await Stripe.instance.applySettings();
@@ -18,17 +19,17 @@ class StripeService {
     try {
       // In a real app, this would be your backend endpoint
       // For testing, we'll simulate the backend call
-      
+
       Map<String, dynamic> body = {
         'amount': amount,
         'currency': currency,
         'payment_method_types': paymentMethodTypes ?? ['card'],
       };
 
-      // This is a mock response - in real implementation, 
+      // This is a mock response - in real implementation,
       // you would call your backend which creates the payment intent
       final response = await _createMockPaymentIntent(body);
-      
+
       return response;
     } catch (err) {
       throw Exception('Error creating payment intent: $err');
@@ -37,14 +38,17 @@ class StripeService {
 
   /// Mock backend response for payment intent creation
   /// In production, replace this with actual backend call
-  static Future<Map<String, dynamic>> _createMockPaymentIntent(Map<String, dynamic> body) async {
+  static Future<Map<String, dynamic>> _createMockPaymentIntent(
+    Map<String, dynamic> body,
+  ) async {
     // Simulate network delay
     await Future.delayed(const Duration(milliseconds: 500));
-    
+
     // Mock payment intent response
     return {
       'id': 'pi_mock_${DateTime.now().millisecondsSinceEpoch}',
-      'client_secret': 'pi_mock_${DateTime.now().millisecondsSinceEpoch}_secret_mock',
+      'client_secret':
+          'pi_mock_${DateTime.now().millisecondsSinceEpoch}_secret_mock',
       'amount': body['amount'],
       'currency': body['currency'],
       'status': 'requires_payment_method',
@@ -73,10 +77,7 @@ class StripeService {
       // Present the payment sheet
       await Stripe.instance.presentPaymentSheet();
 
-      return {
-        'status': 'success',
-        'message': 'Payment completed successfully',
-      };
+      return {'status': 'success', 'message': 'Payment completed successfully'};
     } on StripeException catch (e) {
       return {
         'status': 'error',
@@ -84,10 +85,7 @@ class StripeService {
         'code': e.error.code,
       };
     } catch (e) {
-      return {
-        'status': 'error',
-        'message': 'An unexpected error occurred: $e',
-      };
+      return {'status': 'error', 'message': 'An unexpected error occurred: $e'};
     }
   }
 
