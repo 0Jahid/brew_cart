@@ -3,7 +3,12 @@ import 'package:flutter/services.dart';
 
 class CardDetailsDialog extends StatefulWidget {
   final double amount;
-  final Function(bool success, Map<String, String>? cardDetails, String? errorMessage) onComplete;
+  final Function(
+    bool success,
+    Map<String, String>? cardDetails,
+    String? errorMessage,
+  )
+  onComplete;
 
   const CardDetailsDialog({
     super.key,
@@ -21,7 +26,7 @@ class _CardDetailsDialogState extends State<CardDetailsDialog> {
   final _expiryController = TextEditingController();
   final _cvcController = TextEditingController();
   final _nameController = TextEditingController();
-  
+
   bool _isProcessing = false;
 
   @override
@@ -72,7 +77,7 @@ class _CardDetailsDialogState extends State<CardDetailsDialog> {
     final parts = expiry.split('/');
     final month = int.tryParse(parts[0]) ?? 0;
     final year = int.tryParse(parts[1]) ?? 0;
-    
+
     if (month < 1 || month > 12) {
       _showError('Please enter a valid month (01-12)');
       return false;
@@ -81,7 +86,7 @@ class _CardDetailsDialogState extends State<CardDetailsDialog> {
     final now = DateTime.now();
     final currentYear = now.year % 100;
     final currentMonth = now.month;
-    
+
     if (year < currentYear || (year == currentYear && month < currentMonth)) {
       _showError('Card has expired');
       return false;
@@ -102,10 +107,7 @@ class _CardDetailsDialogState extends State<CardDetailsDialog> {
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
     );
   }
 
@@ -119,7 +121,7 @@ class _CardDetailsDialogState extends State<CardDetailsDialog> {
       await Future.delayed(const Duration(seconds: 2));
 
       final cardNumber = _cardNumberController.text.replaceAll(' ', '');
-      
+
       // Simulate success/failure based on test card numbers
       bool isSuccess = false;
       String? errorMessage;
@@ -147,15 +149,16 @@ class _CardDetailsDialogState extends State<CardDetailsDialog> {
         }
       }
 
-      final cardDetails = isSuccess ? {
-        'last4': cardNumber.substring(cardNumber.length - 4),
-        'brand': _getCardBrand(cardNumber),
-        'expiry': _expiryController.text,
-        'name': _nameController.text,
-      } : null;
+      final cardDetails = isSuccess
+          ? {
+              'last4': cardNumber.substring(cardNumber.length - 4),
+              'brand': _getCardBrand(cardNumber),
+              'expiry': _expiryController.text,
+              'name': _nameController.text,
+            }
+          : null;
 
       widget.onComplete(isSuccess, cardDetails, errorMessage);
-      
     } catch (e) {
       widget.onComplete(false, null, 'An error occurred: $e');
     }
@@ -189,7 +192,7 @@ class _CardDetailsDialogState extends State<CardDetailsDialog> {
                 ),
               ),
               const SizedBox(height: 20),
-              
+
               // Card Number
               TextFormField(
                 controller: _cardNumberController,
@@ -214,7 +217,7 @@ class _CardDetailsDialogState extends State<CardDetailsDialog> {
                 ],
               ),
               const SizedBox(height: 16),
-              
+
               Row(
                 children: [
                   // Expiry Date
@@ -243,7 +246,7 @@ class _CardDetailsDialogState extends State<CardDetailsDialog> {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  
+
                   // CVC
                   Expanded(
                     child: TextFormField(
@@ -265,7 +268,7 @@ class _CardDetailsDialogState extends State<CardDetailsDialog> {
                 ],
               ),
               const SizedBox(height: 16),
-              
+
               // Cardholder Name
               TextFormField(
                 controller: _nameController,
@@ -278,42 +281,17 @@ class _CardDetailsDialogState extends State<CardDetailsDialog> {
                 textCapitalization: TextCapitalization.words,
               ),
               const SizedBox(height: 20),
-              
-              // Test Cards Info
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.blue[50],
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.blue[200]!),
-                ),
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Test Cards:',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue,
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text('4242 4242 4242 4242 - Success', style: TextStyle(fontSize: 12)),
-                    Text('4000 0000 0000 0002 - Declined', style: TextStyle(fontSize: 12)),
-                    Text('4000 0000 0000 9995 - Insufficient funds', style: TextStyle(fontSize: 12)),
-                    Text('Use any future date and any 3-digit CVC', style: TextStyle(fontSize: 12)),
-                  ],
-                ),
-              ),
             ],
           ),
         ),
       ),
       actions: [
         TextButton(
-          onPressed: _isProcessing ? null : () {
-            widget.onComplete(false, null, 'Payment cancelled');
-          },
+          onPressed: _isProcessing
+              ? null
+              : () {
+                  widget.onComplete(false, null, 'Payment cancelled');
+                },
           child: const Text('Cancel'),
         ),
         ElevatedButton(
