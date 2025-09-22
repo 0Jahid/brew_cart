@@ -274,7 +274,7 @@ class _CardDetailsDialogState extends State<CardDetailsDialog> {
                 controller: _nameController,
                 decoration: const InputDecoration(
                   labelText: 'Cardholder Name',
-                  hintText: 'John Doe',
+                  hintText: 'Jahid Hasan',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.person),
                 ),
