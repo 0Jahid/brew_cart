@@ -143,19 +143,6 @@ class _CustomOrdersPageState extends State<CustomOrdersPage> {
             ),
           ),
         ),
-        title: Text(
-          coffeeName,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('Continue', style: TextStyle(color: AppColors.primary)),
-          ),
-          TextButton(onPressed: _goToOrdersTab, child: const Text('View Cart')),
-        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -709,11 +696,6 @@ class _CustomOrdersPageState extends State<CustomOrdersPage> {
         ],
       ),
     );
-  }
-
-  void _goToOrdersTab() {
-    Navigator.of(context).pop();
-    setCoffeeShopTab(1);
   }
 }
 
