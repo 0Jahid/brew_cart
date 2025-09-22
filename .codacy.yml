@@ -1,0 +1,30 @@
+# Codacy configuration for Flutter/Dart project
+exclude_paths:
+  - .codacy/
+  - build/
+  - android/
+  - ios/
+  - linux/
+  - macos/
+  - windows/
+  - web/
+  - test_driver/
+  - "**/*.g.dart"
+  - "**/*.freezed.dart"
+  - "**/*.mocks.dart"
+
+engines:
+  dartanalyzer:
+    enabled: true
+    exclude_paths:
+      - "**/*.g.dart"
+      - "**/*.freezed.dart"
+    patterns:
+      - "**/*.dart"
+
+coverage:
+  exclude_paths:
+    - test/
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/*.mocks.dart"
