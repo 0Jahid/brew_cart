@@ -35,14 +35,14 @@ class AppRouter {
       final user = FirebaseAuth.instance.currentUser;
       final loggingIn =
           state.uri.toString() == login || state.uri.toString() == signUp;
-      final onSplashOrOnboarding = 
+      final onSplashOrOnboarding =
           state.uri.toString() == splash || state.uri.toString() == onboarding;
-      
+
       // Allow splash and onboarding screens to show regardless of auth state
       if (onSplashOrOnboarding) {
         return null;
       }
-      
+
       if (user == null && !loggingIn) {
         return login;
       }
@@ -52,8 +52,14 @@ class AppRouter {
       return null;
     },
     routes: [
-      GoRoute(path: splash, builder: (context, state) => const AnimatedSplashScreen()),
-      GoRoute(path: onboarding, builder: (context, state) => const OnboardingScreen()),
+      GoRoute(
+        path: splash,
+        builder: (context, state) => const AnimatedSplashScreen(),
+      ),
+      GoRoute(
+        path: onboarding,
+        builder: (context, state) => const OnboardingScreen(),
+      ),
       GoRoute(path: login, builder: (context, state) => const LoginPage()),
       GoRoute(path: signUp, builder: (context, state) => const SignUpPage()),
       GoRoute(path: home, builder: (context, state) => const CoffeeShopPage()),

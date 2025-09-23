@@ -17,19 +17,15 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
   @override
   void initState() {
     super.initState();
-    
+
     _animationController = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.elasticOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.elasticOut),
+    );
 
     _animationController.forward();
 

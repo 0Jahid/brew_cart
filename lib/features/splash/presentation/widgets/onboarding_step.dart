@@ -25,10 +25,7 @@ class OnboardingStep extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: Image.asset(
-                image,
-                fit: BoxFit.contain,
-              ),
+              child: Image.asset(image, fit: BoxFit.contain),
             ),
           ),
           const SizedBox(height: 40),

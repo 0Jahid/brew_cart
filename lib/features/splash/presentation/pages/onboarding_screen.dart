@@ -29,7 +29,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     {
       'image': 'assets/step3.jpg',
       'title': 'Fast Delivery',
-      'description': 'Get your coffee delivered fresh and fast to your doorstep.',
+      'description':
+          'Get your coffee delivered fresh and fast to your doorstep.',
     },
   ];
 
