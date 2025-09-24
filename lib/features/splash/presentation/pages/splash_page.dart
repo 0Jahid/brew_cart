@@ -30,7 +30,7 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primary,
+      backgroundColor: AppColors.background,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -46,7 +46,7 @@ class _SplashPageState extends State<SplashPage> {
               child: const Icon(
                 Icons.coffee,
                 size: 60,
-                color: AppColors.primary,
+                color: AppColors.background,
               ),
             ),
             const SizedBox(height: 24),

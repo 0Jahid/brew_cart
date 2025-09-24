@@ -3,7 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import '../../features/splash/presentation/pages/splash_page.dart';
+import '../../features/splash/presentation/pages/animated_splash_screen.dart';
+import '../../features/splash/presentation/pages/onboarding_screen.dart';
 import '../../features/auth/presentation/pages/login_page_new.dart';
 import '../../features/auth/presentation/pages/sign_up_page.dart';
 import '../../features/coffee_shop/presentation/pages/coffee_shop_page.dart';
@@ -14,6 +15,7 @@ import '../../features/profile/presentation/pages/profile_page.dart';
 
 class AppRouter {
   static const String splash = '/';
+  static const String onboarding = '/onboarding';
   static const String login = '/login';
   static const String signUp = '/sign-up';
   // Alias for legacy reference 'register' used in some pages
@@ -33,16 +35,31 @@ class AppRouter {
       final user = FirebaseAuth.instance.currentUser;
       final loggingIn =
           state.uri.toString() == login || state.uri.toString() == signUp;
+      final onSplashOrOnboarding =
+          state.uri.toString() == splash || state.uri.toString() == onboarding;
+
+      // Allow splash and onboarding screens to show regardless of auth state
+      if (onSplashOrOnboarding) {
+        return null;
+      }
+
       if (user == null && !loggingIn) {
         return login;
       }
-      if (user != null && (loggingIn || state.uri.toString() == splash)) {
+      if (user != null && loggingIn) {
         return home;
       }
       return null;
     },
     routes: [
-      GoRoute(path: splash, builder: (context, state) => const SplashPage()),
+      GoRoute(
+        path: splash,
+        builder: (context, state) => const AnimatedSplashScreen(),
+      ),
+      GoRoute(
+        path: onboarding,
+        builder: (context, state) => const OnboardingScreen(),
+      ),
       GoRoute(path: login, builder: (context, state) => const LoginPage()),
       GoRoute(path: signUp, builder: (context, state) => const SignUpPage()),
       GoRoute(path: home, builder: (context, state) => const CoffeeShopPage()),
