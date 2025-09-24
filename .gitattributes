@@ -1,0 +1,2 @@
+# Keep our version of Codacy config during merges
+.codacy/codacy.yaml merge=ours
