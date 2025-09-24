@@ -17,20 +17,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   final List<Map<String, String>> _onboardingData = [
     {
-      'image': 'assets/step1.jpg',
-      'title': 'Welcome to BrewCart',
-      'description': 'Discover the finest coffee blends from around the world.',
-    },
-    {
       'image': 'assets/step2.jpg',
-      'title': 'Easy Ordering',
+      'title': 'Welcome to BrewCart',
       'description': 'Order your favorite coffee with just a few taps.',
     },
     {
-      'image': 'assets/step3.jpg',
+      'image': 'assets/step1.jpg',
       'title': 'Fast Delivery',
       'description':
           'Get your coffee delivered fresh and fast to your doorstep.',
+    },
+    {
+      'image': 'assets/step3.jpg',
+      'title': 'Your Choice',
+      'description':
+          'Customize your coffee order to suit your taste perfectly.',
     },
   ];
 

@@ -19,7 +19,7 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
     super.initState();
 
     _animationController = AnimationController(
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 5),
       vsync: this,
     );
 
@@ -30,7 +30,7 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
     _animationController.forward();
 
     // Navigate to onboarding after animation
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 5), () {
       if (mounted) {
         context.go('/onboarding');
       }
@@ -46,7 +46,7 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primary,
+      backgroundColor: AppColors.background,
       body: Center(
         child: AnimatedBuilder(
           animation: _scaleAnimation,
@@ -61,7 +61,7 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
                     width: 120,
                     height: 120,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.secondaryLight,
                       borderRadius: BorderRadius.circular(60),
                       boxShadow: [
                         BoxShadow(
@@ -74,7 +74,7 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
                     child: const Icon(
                       Icons.coffee,
                       size: 60,
-                      color: Colors.brown,
+                      color: AppColors.primaryLight,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -84,7 +84,7 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: AppColors.textPrimary,
                       letterSpacing: 2,
                     ),
                   ),
@@ -94,7 +94,7 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
                     'Premium Coffee Delivered',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.white70,
+                      color: AppColors.textPrimary,
                       letterSpacing: 1,
                     ),
                   ),
