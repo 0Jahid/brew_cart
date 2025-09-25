@@ -62,3 +62,7 @@ app.*.map.json
 
 # Codacy related
 .codacy/
+
+
+#Ignore vscode AI rules
+.github\instructions\codacy.instructions.md
