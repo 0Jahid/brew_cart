@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../core/constants/app_colors.dart';
+
+class AppColors {
+  static const Color coffeeBrown = Color(0xFF6F4E37); // Dark coffee
+  static const Color latte = Color(0xFFD7B899); // Light latte beige
+  static const Color cream = Color(0xFFF3E5AB); // Cream
+  static const Color caramel = Color(0xFFC68E17); // Caramel accent
+  static const Color error = Color(0xFFD9534F); // Error red
+  static const Color hint = Color(0xFFBFA6A0); // Subtle hint brown
+}
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController? controller;
@@ -56,51 +64,53 @@ class CustomTextField extends StatelessWidget {
         labelText: label,
         hintText: hintText ?? label,
         prefixIcon: prefixIcon != null
-            ? Icon(prefixIcon, color: AppColors.textSecondary)
+            ? Icon(prefixIcon, color: AppColors.coffeeBrown)
             : null,
         suffixIcon: suffixIcon,
         filled: true,
-        fillColor: enabled
-            ? AppColors.cardBackground
-            : AppColors.cardBackground.withValues(alpha: 0.5),
+        fillColor: enabled ? AppColors.latte : AppColors.latte.withOpacity(0.5),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderRadius: BorderRadius.circular(20),
+          borderSide: const BorderSide(color: AppColors.coffeeBrown),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderRadius: BorderRadius.circular(20),
+          borderSide: const BorderSide(color: AppColors.coffeeBrown),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+          borderRadius: BorderRadius.circular(20),
+          borderSide: const BorderSide(color: AppColors.caramel, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(20),
           borderSide: const BorderSide(color: AppColors.error),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(20),
           borderSide: const BorderSide(color: AppColors.error, width: 2),
         ),
         disabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: AppColors.border.withValues(alpha: 0.5),
-          ),
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(color: AppColors.coffeeBrown.withOpacity(0.4)),
         ),
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 12,
+          horizontal: 18,
+          vertical: 14,
         ),
         labelStyle: TextStyle(
-          color: enabled ? AppColors.textSecondary : AppColors.textHint,
+          fontWeight: FontWeight.w600,
+          color: enabled ? AppColors.coffeeBrown : AppColors.hint,
         ),
-        hintStyle: const TextStyle(color: AppColors.textHint),
+        hintStyle: const TextStyle(
+          color: AppColors.hint,
+          fontStyle: FontStyle.italic,
+        ),
       ),
       style: TextStyle(
-        color: enabled ? AppColors.textPrimary : AppColors.textHint,
+        color: enabled ? AppColors.coffeeBrown : AppColors.hint,
+        fontSize: 16,
       ),
+      cursorColor: AppColors.caramel,
     );
   }
 }

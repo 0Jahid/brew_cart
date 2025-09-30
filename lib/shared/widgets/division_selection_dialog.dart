@@ -26,10 +26,7 @@ class DivisionSelectionDialog extends StatelessWidget {
     return AlertDialog(
       title: const Text(
         'Select Division',
-        style: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-        ),
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
       ),
       contentPadding: const EdgeInsets.symmetric(vertical: 20),
       content: SizedBox(
@@ -40,7 +37,7 @@ class DivisionSelectionDialog extends StatelessWidget {
           itemBuilder: (context, index) {
             final division = _divisions[index];
             final isSelected = selectedDivision?['name'] == division['name'];
-            
+
             return ListTile(
               leading: Icon(
                 Icons.location_on,
@@ -57,14 +54,11 @@ class DivisionSelectionDialog extends StatelessWidget {
                 'Lat: ${division['lat']}, Lng: ${division['lng']}',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.grey[600],
+                  color: const Color.fromARGB(255, 255, 255, 255),
                 ),
               ),
               trailing: isSelected
-                  ? const Icon(
-                      Icons.check_circle,
-                      color: Colors.green,
-                    )
+                  ? const Icon(Icons.check_circle, color: Colors.green)
                   : null,
               onTap: () {
                 onDivisionSelected(division);
