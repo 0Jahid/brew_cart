@@ -7,6 +7,7 @@ import '../tabs/orders_tab.dart';
 import '../tabs/history_tab.dart';
 import '../tabs/profile_tab.dart';
 import '../state/coffee_shop_nav.dart';
+import '../../../../core/services/auth_service.dart';
 
 // Thin orchestrator page: delegates actual UI to individual tab widgets.
 class CoffeeShopPage extends StatefulWidget {
@@ -18,12 +19,27 @@ class CoffeeShopPage extends StatefulWidget {
 class _CoffeeShopPageState extends State<CoffeeShopPage> {
   late int _selectedIndex;
   Map<String, dynamic>? _selectedDivision;
+  String _userName = 'User'; // Default fallback name
 
   @override
   void initState() {
     super.initState();
     _selectedIndex = coffeeShopTabIndex.value;
     coffeeShopTabIndex.addListener(_onTabChanged);
+    _loadUserName();
+  }
+
+  void _loadUserName() async {
+    try {
+      final name = await AuthService.instance.getCurrentUserName();
+      if (mounted) {
+        setState(() {
+          _userName = name;
+        });
+      }
+    } catch (e) {
+      print('Error loading user name: $e');
+    }
   }
 
   void _onTabChanged() {
@@ -69,7 +85,7 @@ class _CoffeeShopPageState extends State<CoffeeShopPage> {
       backgroundColor: Colors.grey[100],
       appBar: _selectedIndex == 0
           ? CustomAppBar(
-              userName: 'Jahid',
+              userName: _userName,
               location: _selectedDivision != null
                   ? '${_selectedDivision!['name']}, Bangladesh'
                   : 'Dhaka, Bangladesh',

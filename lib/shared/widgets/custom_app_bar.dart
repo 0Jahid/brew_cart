@@ -33,7 +33,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 children: [
                   // Greeting
                   Text(
-                    'Hello $userName 👋',
+                    'Hi $userName',
                     style: const TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.w700,

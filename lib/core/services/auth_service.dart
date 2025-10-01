@@ -55,6 +55,24 @@ class AuthService {
 
   Future<void> signOut() => _auth.signOut();
 
+  Future<Map<String, dynamic>?> getCurrentUserData() async {
+    final user = currentUser;
+    if (user == null) return null;
+    
+    try {
+      final doc = await _db.collection('users').doc(user.uid).get();
+      return doc.exists ? doc.data() : null;
+    } catch (e) {
+      print('Error getting user data: $e');
+      return null;
+    }
+  }
+
+  Future<String> getCurrentUserName() async {
+    final userData = await getCurrentUserData();
+    return userData?['name'] ?? currentUser?.displayName ?? 'User';
+  }
+
   Future<void> _ensureUserDoc({
     required String uid,
     required Map<String, dynamic> data,
