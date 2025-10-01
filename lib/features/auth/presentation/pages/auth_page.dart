@@ -13,7 +13,6 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-
   Duration get _loginTime => const Duration(milliseconds: 1500);
 
   Future<String?> _authUser(LoginData data) async {
@@ -36,13 +35,13 @@ class _AuthPageState extends State<AuthPage> {
   Future<String?> _signupUser(SignupData data) async {
     try {
       await Future.delayed(_loginTime);
-      
+
       // Debug print to see what data we're getting
       print('Signup data: ${data.additionalSignupData}');
-      
+
       final name = data.additionalSignupData?['name'] ?? '';
       final phone = data.additionalSignupData?['phone'] ?? '';
-      
+
       if (name.isEmpty) {
         Future.delayed(const Duration(milliseconds: 100), () {
           if (mounted) {
@@ -59,7 +58,7 @@ class _AuthPageState extends State<AuthPage> {
         });
         return null;
       }
-      
+
       await AuthService.instance.signUp(
         name: name,
         email: data.name!,
@@ -105,31 +104,24 @@ class _AuthPageState extends State<AuthPage> {
           ),
           title: Row(
             children: [
-              Icon(
-                Icons.error_outline,
-                color: Colors.red[600],
-                size: 28,
-              ),
+              Icon(Icons.error_outline, color: Colors.red[600], size: 28),
               const SizedBox(width: 12),
               const Text(
                 'Authentication Error',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
             ],
           ),
-          content: Text(
-            message,
-            style: const TextStyle(fontSize: 16),
-          ),
+          content: Text(message, style: const TextStyle(fontSize: 16)),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               style: TextButton.styleFrom(
                 foregroundColor: AppColors.primary,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
               ),
               child: const Text(
                 'OK',
@@ -274,11 +266,7 @@ class _AuthPageState extends State<AuthPage> {
                 ),
               ],
             ),
-            child: const Icon(
-              Icons.coffee,
-              size: 40,
-              color: Colors.white,
-            ),
+            child: const Icon(Icons.coffee, size: 40, color: Colors.white),
           ),
         ),
       ),
