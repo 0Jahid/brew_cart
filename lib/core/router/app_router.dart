@@ -5,8 +5,7 @@ import 'dart:async';
 
 import '../../features/splash/presentation/pages/animated_splash_screen.dart';
 import '../../features/splash/presentation/pages/onboarding_screen.dart';
-import '../../features/auth/presentation/pages/login_page_new.dart';
-import '../../features/auth/presentation/pages/sign_up_page.dart';
+import '../../features/auth/presentation/pages/auth_page.dart';
 import '../../features/coffee_shop/presentation/pages/coffee_shop_page.dart';
 import '../../features/coffee_details/presentation/pages/coffee_details_page.dart';
 import '../../features/customization/presentation/pages/customization_page.dart';
@@ -60,8 +59,8 @@ class AppRouter {
         path: onboarding,
         builder: (context, state) => const OnboardingScreen(),
       ),
-      GoRoute(path: login, builder: (context, state) => const LoginPage()),
-      GoRoute(path: signUp, builder: (context, state) => const SignUpPage()),
+      GoRoute(path: login, builder: (context, state) => const AuthPage()),
+      GoRoute(path: signUp, builder: (context, state) => const AuthPage()),
       GoRoute(path: home, builder: (context, state) => const CoffeeShopPage()),
       GoRoute(
         path: coffeeDetails,
