@@ -26,7 +26,7 @@ class CustomBottomNavBar extends StatelessWidget {
       items: <Widget>[
         _buildNavIcon('assets/icons/home.svg'),
         _buildNavIcon('assets/icons/shopping_bag.svg'),
-        _buildNavIcon('assets/icons/page_info.svg'),
+        _buildNavIcon('assets/icons/poi.svg'),
         _buildNavIcon('assets/icons/person.svg'),
       ],
       onTap: onTap,
