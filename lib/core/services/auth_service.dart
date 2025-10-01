@@ -58,7 +58,7 @@ class AuthService {
   Future<Map<String, dynamic>?> getCurrentUserData() async {
     final user = currentUser;
     if (user == null) return null;
-    
+
     try {
       final doc = await _db.collection('users').doc(user.uid).get();
       return doc.exists ? doc.data() : null;
